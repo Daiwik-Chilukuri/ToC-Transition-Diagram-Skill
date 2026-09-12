@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exercise 1.1.15: DFA for Σ⁺ (All Non-Empty Strings)</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-heading: #f0f6fc;
+      --accent: #58a6ff;
+      --success: #3fb950;
+      --danger: #f85149;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .header {
+      text-align: center;
+    }
+    .header h1 {
+      color: var(--text-heading);
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .header p {
+      color: #8b949e;
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+    .canvas-card {
+      background: #07090e;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    svg.dfa-diagram {
+      max-width: 100%;
+      height: auto;
+      user-select: none;
+    }
+    .simulator-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .sim-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sim-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .sim-input {
+      flex: 1;
+      min-width: 200px;
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #f0f6fc;
+      font-family: "Courier New", monospace;
+      font-size: 1rem;
+      outline: none;
+    }
+    .sim-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+    }
+    .btn {
+      background: #21262d;
+      color: #c9d1d9;
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+    .btn:hover {
+      background: #30363d;
+      color: #fff;
+    }
+    .btn-primary {
+      background: #238636;
+      border-color: #2ea043;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #2ea043;
+    }
+    .tape-display {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      min-height: 48px;
+      padding: 8px 12px;
+      background: #090d13;
+      border: 1px solid #21262d;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .tape-cell {
+      min-width: 34px;
+      height: 34px;
+      border: 1px solid #30363d;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #8b949e;
+      background: #161b22;
+      transition: all 0.2s ease;
+    }
+    .tape-cell.active {
+      background: rgba(88, 166, 255, 0.18);
+      border-color: var(--accent);
+      color: #58a6ff;
+      transform: scale(1.08);
+    }
+    .tape-cell.consumed {
+      opacity: 0.45;
+      text-decoration: line-through;
+    }
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-ready { background: #21262d; color: #8b949e; }
+    .badge-running { background: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid #58a6ff; }
+    .badge-accepted { background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid #3fb950; }
+    .badge-rejected { background: rgba(248, 81, 73, 0.15); color: #f85149; border: 1px solid #f85149; }
+    .step-trace {
+      font-family: "Courier New", monospace;
+      font-size: 0.85rem;
+      color: #8b949e;
+      word-break: break-all;
+    }
+    /* SVG Node Active Highlights */
+    .node-group {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .node-group.active circle.state-circle {
+      stroke: #58a6ff !important;
+      stroke-width: 2.8px !important;
+      filter: drop-shadow(0 0 6px rgba(88, 166, 255, 0.7));
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Exercise 1.1.15: DFA for Σ⁺ (All Non-Empty Strings)</h1>
+      <p>Language L = Σ⁺ = {w ∈ Σ* : |w| ≥ 1} over Σ = {0, 1}</p>
+    </div>
+
+    <div class="canvas-card">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" width="720" height="340" class="dfa-diagram">
+  <defs>
+    <marker id="tikz-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#f0f6fc" />
+    </marker>
+    <style>
+      .state-circle { fill: #07090e; stroke: #f0f6fc; stroke-width: 1.6px; }
+      .state-circle-inner { fill: none; stroke: #f0f6fc; stroke-width: 1.4px; }
+      .state-label {
+        font-family: "Computer Modern", "Latin Modern Math", "STIX Two Text", "Times New Roman", serif;
+        font-size: 16px;
+        fill: #f0f6fc;
+        text-anchor: middle;
+        dominant-baseline: central;
+      }
+      .trans-edge {
+        fill: none;
+        stroke: #f0f6fc;
+        stroke-width: 1.4px;
+        stroke-linecap: round;
+        marker-end: url(#tikz-arrow);
+      }
+      .trans-label {
+        font-family: "Computer Modern", "Latin Modern Math", "STIX Two Text", "Times New Roman", serif;
+        font-size: 15px;
+        fill: #f0f6fc;
+        text-anchor: middle;
+        dominant-baseline: central;
+        font-style: italic;
+        paint-order: stroke fill;
+        stroke: #07090e;
+        stroke-width: 4px;
+        stroke-linejoin: round;
+      }
+      .start-arrow {
+        fill: none;
+        stroke: #f0f6fc;
+        stroke-width: 1.5px;
+        marker-end: url(#tikz-arrow);
+      }
+    </style>
+  </defs>
+  <!-- Transitions -->
+  <g class="transitions-layer">
+    <line x1="276.0" y1="190.0" x2="463.0" y2="190.0" class="trans-edge" />
+    <text x="369.5" y="172.0" class="trans-label">0, 1</text>
+    <path d="M 480 164 C 464 122, 516 122, 500 164" class="trans-edge" />
+    <text x="490" y="132" class="trans-label">0, 1</text>
+  </g>
+  <!-- States / Nodes -->
+  <g class="nodes-layer">
+    <g class="node-group" id="node-q0">
+      <line x1="198" y1="190" x2="223" y2="190" class="start-arrow" />
+      <circle cx="250" cy="190" r="26" class="state-circle" />
+      <text x="250" y="190.5" class="state-label">q0</text>
+    </g>
+    <g class="node-group" id="node-q1">
+      <circle cx="490" cy="190" r="26" class="state-circle" />
+      <circle cx="490" cy="190" r="21.5" class="state-circle-inner" />
+      <text x="490" y="190.5" class="state-label">q1</text>
+    </g>
+  </g>
+</svg>
+    </div>
+
+    <div class="simulator-card">
+      <div class="sim-title">
+        <span>Interactive String Simulator</span>
+      </div>
+      <div class="sim-controls">
+        <input type="text" id="strInput" class="sim-input" placeholder="Enter input string (e.g. 101)" value="101">
+        <button id="btnStep" class="btn btn-primary">Step</button>
+        <button id="btnAuto" class="btn">Play</button>
+        <button id="btnReset" class="btn">Reset</button>
+      </div>
+      <div class="tape-display" id="tapeDisplay"></div>
+      <div class="status-row">
+        <div class="step-trace" id="stepTrace">Ready. State: <strong>q0</strong></div>
+        <div class="status-badge badge-ready" id="statusBadge">Ready</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DFA_SPEC = {"start_state": "q0", "accept_states": ["q1"], "transition_map": {"q0,0": "q1", "q0,1": "q1", "q1,0": "q1", "q1,1": "q1"}, "alphabet": ["0", "1"]};
+
+    let currentState = DFA_SPEC.start_state;
+    let inputString = "";
+    let headPos = 0;
+    let isRunning = false;
+    let timer = null;
+    let traceSteps = [];
+
+    const strInput = document.getElementById("strInput");
+    const btnStep = document.getElementById("btnStep");
+    const btnAuto = document.getElementById("btnAuto");
+    const btnReset = document.getElementById("btnReset");
+    const tapeDisplay = document.getElementById("tapeDisplay");
+    const stepTrace = document.getElementById("stepTrace");
+    const statusBadge = document.getElementById("statusBadge");
+
+    function highlightState(stateId) {
+      document.querySelectorAll(".node-group").forEach(el => {
+        el.classList.remove("active");
+      });
+      const target = document.getElementById("node-" + stateId);
+      if (target) {
+        target.classList.add("active");
+      }
+    }
+
+    function renderTape() {
+      tapeDisplay.innerHTML = "";
+      if (inputString.length === 0) {
+        const emptyCell = document.createElement("div");
+        emptyCell.className = "tape-cell active";
+        emptyCell.textContent = "\u03B5"; // epsilon
+        tapeDisplay.appendChild(emptyCell);
+        return;
+      }
+      for (let i = 0; i < inputString.length; i++) {
+        const cell = document.createElement("div");
+        cell.className = "tape-cell";
+        cell.textContent = inputString[i];
+        if (i < headPos) {
+          cell.classList.add("consumed");
+        } else if (i === headPos) {
+          cell.classList.add("active");
+        }
+        tapeDisplay.appendChild(cell);
+      }
+    }
+
+    function resetSimulation() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+        isRunning = false;
+        btnAuto.textContent = "Play";
+      }
+      inputString = strInput.value.trim();
+      headPos = 0;
+      currentState = DFA_SPEC.start_state;
+      traceSteps = [`( ${currentState}, "${inputString || "\u03B5"}" )`];
+      highlightState(currentState);
+      renderTape();
+      updateStatus("ready", "Ready");
+      stepTrace.innerHTML = `Start state: <strong>${currentState}</strong>`;
+      
+      // If string is empty, evaluate immediate acceptance
+      if (inputString.length === 0) {
+        evaluateFinal();
+      }
+    }
+
+    function stepSimulation() {
+      if (headPos >= inputString.length) {
+        evaluateFinal();
+        return false;
+      }
+
+      const symbol = inputString[headPos];
+      const transKey = `${currentState},${symbol}`;
+      const nextState = DFA_SPEC.transition_map[transKey];
+
+      if (nextState === undefined) {
+        updateStatus("rejected", "No transition for symbol");
+        stepTrace.innerHTML += ` &rarr; <strong>Rejected (Undefined)</strong>`;
+        if (timer) { clearInterval(timer); timer = null; isRunning = false; btnAuto.textContent = "Play"; }
+        return false;
+      }
+
+      headPos++;
+      currentState = nextState;
+      highlightState(currentState);
+      renderTape();
+
+      const remaining = inputString.slice(headPos) || "\u03B5";
+      traceSteps.push(`( ${currentState}, "${remaining}" )`);
+      stepTrace.innerHTML = traceSteps.join(" &vdash; ");
+
+      if (headPos >= inputString.length) {
+        evaluateFinal();
+        return false;
+      }
+      updateStatus("running", `Reading "${inputString[headPos]}"`);
+      return true;
+    }
+
+    function evaluateFinal() {
+      const isAccept = DFA_SPEC.accept_states.includes(currentState);
+      if (isAccept) {
+        updateStatus("accepted", "ACCEPTED");
+        stepTrace.innerHTML += ` &rarr; <span style="color:#3fb950; font-weight:bold;">&check; Accepted in ${currentState}</span>`;
+      } else {
+        updateStatus("rejected", "REJECTED");
+        stepTrace.innerHTML += ` &rarr; <span style="color:#f85149; font-weight:bold;">&cross; Rejected in ${currentState}</span>`;
+      }
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+        isRunning = false;
+        btnAuto.textContent = "Play";
+      }
+    }
+
+    function updateStatus(stateClass, text) {
+      statusBadge.className = `status-badge badge-${stateClass}`;
+      statusBadge.textContent = text;
+    }
+
+    btnStep.addEventListener("click", () => {
+      if (headPos >= inputString.length && inputString.length > 0) {
+        resetSimulation();
+      }
+      stepSimulation();
+    });
+
+    btnAuto.addEventListener("click", () => {
+      if (isRunning) {
+        clearInterval(timer);
+        timer = null;
+        isRunning = false;
+        btnAuto.textContent = "Play";
+      } else {
+        if (headPos >= inputString.length && inputString.length > 0) {
+          resetSimulation();
+        }
+        isRunning = true;
+        btnAuto.textContent = "Pause";
+        timer = setInterval(() => {
+          const hasMore = stepSimulation();
+          if (!hasMore) {
+            clearInterval(timer);
+            timer = null;
+            isRunning = false;
+            btnAuto.textContent = "Play";
+          }
+        }, 700);
+      }
+    });
+
+    btnReset.addEventListener("click", resetSimulation);
+    strInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        resetSimulation();
+      }
+    });
+
+    // Initialize on load
+    resetSimulation();
+  </script>
+</body>
+</html>

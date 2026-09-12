@@ -1,0 +1,50 @@
+{
+  "title": "Exercise 1.1.15: DFA for \u03a3\u207a (All Non-Empty Strings)",
+  "subtitle": "Language L = \u03a3\u207a = {w \u2208 \u03a3* : |w| \u2265 1} over \u03a3 = {0, 1}",
+  "sample_input": "101",
+  "alphabet": [
+    "0",
+    "1"
+  ],
+  "width": 720,
+  "height": 340,
+  "states": [
+    {
+      "id": "q0",
+      "label": "q0",
+      "x": 250,
+      "y": 190,
+      "is_start": true,
+      "is_accept": false
+    },
+    {
+      "id": "q1",
+      "label": "q1",
+      "x": 490,
+      "y": 190,
+      "is_start": false,
+      "is_accept": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "q0",
+      "to": "q1",
+      "symbols": [
+        "0",
+        "1"
+      ],
+      "curve": 0,
+      "label_offset": -18
+    },
+    {
+      "from": "q1",
+      "to": "q1",
+      "symbols": [
+        "0",
+        "1"
+      ],
+      "loop": "top"
+    }
+  ]
+}

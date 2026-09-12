@@ -1,0 +1,23 @@
+{
+  "title": "Figure 1.8: Machine for recognizing strings that do not contain three consecutive b's",
+  "subtitle": "Language L = {w \u2208 {a, b}* : w does not contain 'bbb'}",
+  "sample_input": "ababb",
+  "alphabet": ["a", "b"],
+  "width": 820,
+  "height": 380,
+  "states": [
+    {"id": "q0", "label": "q0", "x": 140, "y": 210, "is_start": true, "is_accept": true},
+    {"id": "q1", "label": "q1", "x": 330, "y": 210, "is_start": false, "is_accept": true},
+    {"id": "q2", "label": "q2", "x": 520, "y": 210, "is_start": false, "is_accept": true},
+    {"id": "q3", "label": "q3", "x": 700, "y": 210, "is_start": false, "is_accept": false}
+  ],
+  "transitions": [
+    {"from": "q0", "to": "q0", "symbols": ["a"], "loop": "top"},
+    {"from": "q0", "to": "q1", "symbols": ["b"], "curve": 0, "label_offset": -16},
+    {"from": "q1", "to": "q0", "symbols": ["a"], "curve": -35},
+    {"from": "q1", "to": "q2", "symbols": ["b"], "curve": 0, "label_offset": -16},
+    {"from": "q2", "to": "q0", "symbols": ["a"], "curve": 75},
+    {"from": "q2", "to": "q3", "symbols": ["b"], "curve": 0, "label_offset": -16},
+    {"from": "q3", "to": "q3", "symbols": ["a", "b"], "loop": "top"}
+  ]
+}

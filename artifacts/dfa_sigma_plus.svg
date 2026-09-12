@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" width="720" height="340" class="dfa-diagram">
+  <defs>
+    <marker id="tikz-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#f0f6fc" />
+    </marker>
+    <style>
+      .state-circle { fill: #07090e; stroke: #f0f6fc; stroke-width: 1.6px; }
+      .state-circle-inner { fill: none; stroke: #f0f6fc; stroke-width: 1.4px; }
+      .state-label {
+        font-family: "Computer Modern", "Latin Modern Math", "STIX Two Text", "Times New Roman", serif;
+        font-size: 16px;
+        fill: #f0f6fc;
+        text-anchor: middle;
+        dominant-baseline: central;
+      }
+      .trans-edge {
+        fill: none;
+        stroke: #f0f6fc;
+        stroke-width: 1.4px;
+        stroke-linecap: round;
+        marker-end: url(#tikz-arrow);
+      }
+      .trans-label {
+        font-family: "Computer Modern", "Latin Modern Math", "STIX Two Text", "Times New Roman", serif;
+        font-size: 15px;
+        fill: #f0f6fc;
+        text-anchor: middle;
+        dominant-baseline: central;
+        font-style: italic;
+        paint-order: stroke fill;
+        stroke: #07090e;
+        stroke-width: 4px;
+        stroke-linejoin: round;
+      }
+      .start-arrow {
+        fill: none;
+        stroke: #f0f6fc;
+        stroke-width: 1.5px;
+        marker-end: url(#tikz-arrow);
+      }
+    </style>
+  </defs>
+  <!-- Transitions -->
+  <g class="transitions-layer">
+    <line x1="276.0" y1="190.0" x2="463.0" y2="190.0" class="trans-edge" />
+    <text x="369.5" y="172.0" class="trans-label">0, 1</text>
+    <path d="M 480 164 C 464 122, 516 122, 500 164" class="trans-edge" />
+    <text x="490" y="132" class="trans-label">0, 1</text>
+  </g>
+  <!-- States / Nodes -->
+  <g class="nodes-layer">
+    <g class="node-group" id="node-q0">
+      <line x1="198" y1="190" x2="223" y2="190" class="start-arrow" />
+      <circle cx="250" cy="190" r="26" class="state-circle" />
+      <text x="250" y="190.5" class="state-label">q0</text>
+    </g>
+    <g class="node-group" id="node-q1">
+      <circle cx="490" cy="190" r="26" class="state-circle" />
+      <circle cx="490" cy="190" r="21.5" class="state-circle-inner" />
+      <text x="490" y="190.5" class="state-label">q1</text>
+    </g>
+  </g>
+</svg>
