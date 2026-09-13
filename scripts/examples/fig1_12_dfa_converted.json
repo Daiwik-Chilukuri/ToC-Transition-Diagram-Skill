@@ -1,0 +1,164 @@
+{
+  "name": "fig1_12_dfa_converted",
+  "type": "dfa",
+  "title": "Converted DFA: Substring 101 or 11",
+  "subtitle": "Lecture Figure 1.12 Determinized DFA (p. 17–18) — 6 Reachable Powerset States (10 Pruned)",
+  "sample_input": "010110",
+  "alphabet": ["0", "1"],
+  "width": 860,
+  "height": 440,
+  "states": [
+    {
+      "id": "q0",
+      "label": "{q0}",
+      "x": 170,
+      "y": 140,
+      "is_start": true,
+      "is_accept": false
+    },
+    {
+      "id": "q0_q1_q2",
+      "label": "{q0, q1, q2}",
+      "x": 430,
+      "y": 140,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "q0_q2",
+      "label": "{q0, q2}",
+      "x": 170,
+      "y": 300,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "q0_q1_q2_q3",
+      "label": "{q0, q1, q2, q3}",
+      "x": 690,
+      "y": 140,
+      "is_start": false,
+      "is_accept": true
+    },
+    {
+      "id": "q0_q2_q3",
+      "label": "{q0, q2, q3}",
+      "x": 430,
+      "y": 300,
+      "is_start": false,
+      "is_accept": true
+    },
+    {
+      "id": "q0_q3",
+      "label": "{q0, q3}",
+      "x": 690,
+      "y": 300,
+      "is_start": false,
+      "is_accept": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "q0",
+      "to": "q0",
+      "symbols": ["0"],
+      "loop": "top"
+    },
+    {
+      "from": "q0",
+      "to": "q0_q1_q2",
+      "symbols": ["1"],
+      "curve": 0,
+      "label_offset": -16
+    },
+    {
+      "from": "q0_q1_q2",
+      "to": "q0_q2",
+      "symbols": ["0"],
+      "curve": 0,
+      "label_offset": 16
+    },
+    {
+      "from": "q0_q1_q2",
+      "to": "q0_q1_q2_q3",
+      "symbols": ["1"],
+      "curve": 0,
+      "label_offset": -16
+    },
+    {
+      "from": "q0_q2",
+      "to": "q0",
+      "symbols": ["0"],
+      "curve": -20,
+      "label_offset": -16
+    },
+    {
+      "from": "q0_q2",
+      "to": "q0_q1_q2_q3",
+      "symbols": ["1"],
+      "curve": 25,
+      "label_offset": 16
+    },
+    {
+      "from": "q0_q1_q2_q3",
+      "to": "q0_q1_q2_q3",
+      "symbols": ["1"],
+      "loop": "top"
+    },
+    {
+      "from": "q0_q1_q2_q3",
+      "to": "q0_q2_q3",
+      "symbols": ["0"],
+      "curve": 0,
+      "label_offset": 16
+    },
+    {
+      "from": "q0_q2_q3",
+      "to": "q0_q1_q2_q3",
+      "symbols": ["1"],
+      "curve": 0,
+      "label_offset": -16
+    },
+    {
+      "from": "q0_q2_q3",
+      "to": "q0_q3",
+      "symbols": ["0"],
+      "curve": 0,
+      "label_offset": 16
+    },
+    {
+      "from": "q0_q3",
+      "to": "q0_q3",
+      "symbols": ["0"],
+      "loop": "bottom"
+    },
+    {
+      "from": "q0_q3",
+      "to": "q0_q1_q2_q3",
+      "symbols": ["1"],
+      "curve": -20,
+      "label_offset": -16
+    }
+  ],
+  "test_cases": [
+    { "input": "11", "expected": true },
+    { "input": "101", "expected": true },
+    { "input": "010110", "expected": true },
+    { "input": "001100", "expected": true },
+    { "input": "111", "expected": true },
+    { "input": "0101", "expected": true },
+    { "input": "1010", "expected": true },
+    { "input": "100101", "expected": true },
+    { "input": "11000", "expected": true },
+    { "input": "", "expected": false },
+    { "input": "0", "expected": false },
+    { "input": "1", "expected": false },
+    { "input": "00", "expected": false },
+    { "input": "01", "expected": false },
+    { "input": "10", "expected": false },
+    { "input": "010", "expected": false },
+    { "input": "100", "expected": false },
+    { "input": "1001", "expected": false },
+    { "input": "0100100", "expected": false }
+  ]
+}

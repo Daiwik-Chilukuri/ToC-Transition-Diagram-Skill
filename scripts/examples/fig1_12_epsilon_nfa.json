@@ -1,0 +1,100 @@
+{
+  "name": "fig1_12_epsilon_nfa",
+  "type": "epsilon_nfa",
+  "title": "ε-NFA: Substring 101 or 11",
+  "subtitle": "Lecture Figure 1.12 (p. 14) — Non-Deterministic Finite Automaton with ε-Transition",
+  "sample_input": "010110",
+  "alphabet": ["0", "1"],
+  "width": 800,
+  "height": 320,
+  "states": [
+    {
+      "id": "q0",
+      "label": "q0",
+      "x": 130,
+      "y": 160,
+      "is_start": true,
+      "is_accept": false
+    },
+    {
+      "id": "q1",
+      "label": "q1",
+      "x": 310,
+      "y": 160,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "q2",
+      "label": "q2",
+      "x": 490,
+      "y": 160,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "q3",
+      "label": "q3",
+      "x": 670,
+      "y": 160,
+      "is_start": false,
+      "is_accept": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "q0",
+      "to": "q0",
+      "symbols": ["0", "1"],
+      "loop": "top"
+    },
+    {
+      "from": "q0",
+      "to": "q1",
+      "symbols": ["1"],
+      "curve": 0,
+      "label_offset": -16
+    },
+    {
+      "from": "q1",
+      "to": "q2",
+      "symbols": ["0", "ε"],
+      "curve": 0,
+      "label_offset": -16
+    },
+    {
+      "from": "q2",
+      "to": "q3",
+      "symbols": ["1"],
+      "curve": 0,
+      "label_offset": -16
+    },
+    {
+      "from": "q3",
+      "to": "q3",
+      "symbols": ["0", "1"],
+      "loop": "top"
+    }
+  ],
+  "test_cases": [
+    { "input": "11", "expected": true },
+    { "input": "101", "expected": true },
+    { "input": "010110", "expected": true },
+    { "input": "001100", "expected": true },
+    { "input": "111", "expected": true },
+    { "input": "0101", "expected": true },
+    { "input": "1010", "expected": true },
+    { "input": "100101", "expected": true },
+    { "input": "11000", "expected": true },
+    { "input": "", "expected": false },
+    { "input": "0", "expected": false },
+    { "input": "1", "expected": false },
+    { "input": "00", "expected": false },
+    { "input": "01", "expected": false },
+    { "input": "10", "expected": false },
+    { "input": "010", "expected": false },
+    { "input": "100", "expected": false },
+    { "input": "1001", "expected": false },
+    { "input": "0100100", "expected": false }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "name": "fig1_11_nfa",
+  "type": "nfa",
+  "title": "NFA: L = {aba, ab}*",
+  "subtitle": "Lecture Figure 1.11 (p. 13) — Nondeterministic Finite Automaton with Branching on 'b'",
+  "sample_input": "ababa",
+  "alphabet": ["a", "b"],
+  "width": 720,
+  "height": 380,
+  "states": [
+    {
+      "id": "q0",
+      "label": "q0",
+      "x": 220,
+      "y": 160,
+      "is_start": true,
+      "is_accept": true
+    },
+    {
+      "id": "q1",
+      "label": "q1",
+      "x": 500,
+      "y": 160,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "q2",
+      "label": "q2",
+      "x": 360,
+      "y": 290,
+      "is_start": false,
+      "is_accept": false
+    }
+  ],
+  "transitions": [
+    {
+      "from": "q0",
+      "to": "q1",
+      "symbols": ["a"],
+      "curve": -24,
+      "label_offset": -16
+    },
+    {
+      "from": "q1",
+      "to": "q0",
+      "symbols": ["b"],
+      "curve": -24,
+      "label_offset": -16
+    },
+    {
+      "from": "q1",
+      "to": "q2",
+      "symbols": ["b"],
+      "curve": 0,
+      "label_offset": 16
+    },
+    {
+      "from": "q2",
+      "to": "q0",
+      "symbols": ["a"],
+      "curve": 0,
+      "label_offset": -16
+    }
+  ],
+  "test_cases": [
+    { "input": "", "expected": true },
+    { "input": "ab", "expected": true },
+    { "input": "aba", "expected": true },
+    { "input": "abab", "expected": true },
+    { "input": "ababa", "expected": true },
+    { "input": "abaaba", "expected": true },
+    { "input": "abaababa", "expected": true },
+    { "input": "ababab", "expected": true },
+    { "input": "abababa", "expected": true },
+    { "input": "a", "expected": false },
+    { "input": "b", "expected": false },
+    { "input": "abb", "expected": false },
+    { "input": "ba", "expected": false },
+    { "input": "aab", "expected": false },
+    { "input": "abaa", "expected": false },
+    { "input": "ababaa", "expected": false },
+    { "input": "abababb", "expected": false },
+    { "input": "bb", "expected": false }
+  ]
+}

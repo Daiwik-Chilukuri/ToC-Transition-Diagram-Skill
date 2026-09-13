@@ -1,0 +1,147 @@
+{
+  "name": "fig1_10_product_union",
+  "type": "product_dfa",
+  "title": "Product DFA M1 x M2: Union (L1 ∪ L2)",
+  "subtitle": "Lecture Figure 1.10 Product DFA for Union (L1 ∪ L2 = {w : w contains '1' or starts with '0'})",
+  "sample_input": "010",
+  "alphabet": ["0", "1"],
+  "width": 800,
+  "height": 440,
+  "product_meta": {
+    "operation": "union",
+    "m1": "fig1_10_m1",
+    "m2": "fig1_10_m2",
+    "grid": "2x3",
+    "acceptance_condition": "p ∈ F1 ∨ q ∈ F2"
+  },
+  "states": [
+    {
+      "id": "p0_q0",
+      "label": "(p0, q0)",
+      "x": 180,
+      "y": 130,
+      "is_start": true,
+      "is_accept": false
+    },
+    {
+      "id": "p0_q1",
+      "label": "(p0, q1)",
+      "x": 400,
+      "y": 130,
+      "is_start": false,
+      "is_accept": true
+    },
+    {
+      "id": "p0_q2",
+      "label": "(p0, q2)",
+      "x": 620,
+      "y": 130,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "p1_q0",
+      "label": "(p1, q0)",
+      "x": 180,
+      "y": 290,
+      "is_start": false,
+      "is_accept": true
+    },
+    {
+      "id": "p1_q1",
+      "label": "(p1, q1)",
+      "x": 400,
+      "y": 290,
+      "is_start": false,
+      "is_accept": true
+    },
+    {
+      "id": "p1_q2",
+      "label": "(p1, q2)",
+      "x": 620,
+      "y": 290,
+      "is_start": false,
+      "is_accept": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "p0_q0",
+      "to": "p0_q1",
+      "symbols": ["0"],
+      "curve": 0,
+      "label_offset": -16
+    },
+    {
+      "from": "p0_q0",
+      "to": "p1_q2",
+      "symbols": ["1"],
+      "curve": 0,
+      "label_offset": 16
+    },
+    {
+      "from": "p0_q1",
+      "to": "p0_q1",
+      "symbols": ["0"],
+      "loop": "top"
+    },
+    {
+      "from": "p0_q1",
+      "to": "p1_q1",
+      "symbols": ["1"],
+      "curve": 0,
+      "label_offset": -16
+    },
+    {
+      "from": "p1_q1",
+      "to": "p1_q1",
+      "symbols": ["0", "1"],
+      "loop": "bottom"
+    },
+    {
+      "from": "p1_q2",
+      "to": "p1_q2",
+      "symbols": ["0", "1"],
+      "loop": "bottom"
+    },
+    {
+      "from": "p0_q2",
+      "to": "p0_q2",
+      "symbols": ["0"],
+      "loop": "top"
+    },
+    {
+      "from": "p0_q2",
+      "to": "p1_q2",
+      "symbols": ["1"],
+      "curve": 0,
+      "label_offset": 16
+    },
+    {
+      "from": "p1_q0",
+      "to": "p1_q1",
+      "symbols": ["0"],
+      "curve": 0,
+      "label_offset": 16
+    },
+    {
+      "from": "p1_q0",
+      "to": "p1_q2",
+      "symbols": ["1"],
+      "curve": 70,
+      "label_offset": 18
+    }
+  ],
+  "test_cases": [
+    { "input": "", "expected": false },
+    { "input": "0", "expected": true },
+    { "input": "1", "expected": true },
+    { "input": "00", "expected": true },
+    { "input": "01", "expected": true },
+    { "input": "10", "expected": true },
+    { "input": "11", "expected": true },
+    { "input": "0000", "expected": true },
+    { "input": "10101", "expected": true },
+    { "input": "0110", "expected": true }
+  ]
+}

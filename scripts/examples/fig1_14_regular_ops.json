@@ -1,0 +1,146 @@
+{
+  "name": "fig1_14_regular_ops",
+  "type": "epsilon_nfa",
+  "title": "Regular Operation NFA: Union (L1 ∪ L2)",
+  "subtitle": "Lecture Figure 1.14 (p. 23) — Union with New Start State and ε-Transitions",
+  "sample_input": "11011",
+  "alphabet": ["0", "1"],
+  "width": 880,
+  "height": 460,
+  "states": [
+    {
+      "id": "s0",
+      "label": "s0",
+      "x": 120,
+      "y": 230,
+      "is_start": true,
+      "is_accept": false
+    },
+    {
+      "id": "p0",
+      "label": "p0",
+      "x": 310,
+      "y": 130,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "p1",
+      "label": "p1",
+      "x": 520,
+      "y": 130,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "p2",
+      "label": "p2",
+      "x": 730,
+      "y": 130,
+      "is_start": false,
+      "is_accept": true
+    },
+    {
+      "id": "q0",
+      "label": "q0",
+      "x": 310,
+      "y": 330,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "q1",
+      "label": "q1",
+      "x": 520,
+      "y": 330,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "q2",
+      "label": "q2",
+      "x": 730,
+      "y": 330,
+      "is_start": false,
+      "is_accept": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "s0",
+      "to": "p0",
+      "symbols": ["ε"],
+      "curve": -18,
+      "label_offset": -16
+    },
+    {
+      "from": "s0",
+      "to": "q0",
+      "symbols": ["ε"],
+      "curve": 18,
+      "label_offset": 16
+    },
+    {
+      "from": "p0",
+      "to": "p1",
+      "symbols": ["1"],
+      "curve": 0,
+      "label_offset": -16
+    },
+    {
+      "from": "p1",
+      "to": "p2",
+      "symbols": ["1"],
+      "curve": 0,
+      "label_offset": -16
+    },
+    {
+      "from": "p2",
+      "to": "p2",
+      "symbols": ["0", "1"],
+      "loop": "top"
+    },
+    {
+      "from": "q0",
+      "to": "q0",
+      "symbols": ["0", "1"],
+      "loop": "bottom"
+    },
+    {
+      "from": "q0",
+      "to": "q1",
+      "symbols": ["1"],
+      "curve": 0,
+      "label_offset": -16
+    },
+    {
+      "from": "q1",
+      "to": "q2",
+      "symbols": ["1"],
+      "curve": 0,
+      "label_offset": -16
+    }
+  ],
+  "test_cases": [
+    { "input": "11", "expected": true },
+    { "input": "110", "expected": true },
+    { "input": "11000", "expected": true },
+    { "input": "111", "expected": true },
+    { "input": "011", "expected": true },
+    { "input": "00011", "expected": true },
+    { "input": "1011", "expected": true },
+    { "input": "11011", "expected": true },
+    { "input": "1101011", "expected": true },
+    { "input": "", "expected": false },
+    { "input": "0", "expected": false },
+    { "input": "1", "expected": false },
+    { "input": "00", "expected": false },
+    { "input": "01", "expected": false },
+    { "input": "10", "expected": false },
+    { "input": "101", "expected": false },
+    { "input": "010", "expected": false },
+    { "input": "1010", "expected": false },
+    { "input": "01010", "expected": false },
+    { "input": "1010101", "expected": false }
+  ]
+}

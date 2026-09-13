@@ -1,6 +1,8 @@
 {
+  "name": "decimal_mod3",
+  "type": "dfa",
   "title": "Figure 1.7: Decimal Value Congruent to 2 mod 3",
-  "subtitle": "Accepts strings whose decimal value is congruent to 2 mod 3 over \u03a3 = {0, 1}",
+  "subtitle": "Accepts strings whose decimal value is congruent to 2 mod 3 over Σ = {0, 1}",
   "sample_input": "1011",
   "alphabet": ["0", "1"],
   "width": 720,
@@ -17,5 +19,20 @@
     {"from": "1%3", "to": "2%3", "symbols": ["0"], "curve": -28},
     {"from": "2%3", "to": "1%3", "symbols": ["0"], "curve": -28},
     {"from": "2%3", "to": "2%3", "symbols": ["1"], "loop": "bottom"}
+  ],
+  "test_cases": [
+    {"input": "", "expected": false},
+    {"input": "0", "expected": false},
+    {"input": "1", "expected": false},
+    {"input": "10", "expected": true},
+    {"input": "11", "expected": false},
+    {"input": "100", "expected": false},
+    {"input": "101", "expected": true},
+    {"input": "110", "expected": false},
+    {"input": "111", "expected": false},
+    {"input": "1000", "expected": true},
+    {"input": "1011", "expected": true},
+    {"input": "0010", "expected": true},
+    {"input": "00", "expected": false}
   ]
 }

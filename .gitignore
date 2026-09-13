@@ -3,3 +3,6 @@ __pycache__/
 *.class
 .DS_Store
 Thumbs.db
+/artifacts
+/specs
+/temp

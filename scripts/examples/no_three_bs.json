@@ -1,6 +1,8 @@
 {
+  "name": "no_three_bs",
+  "type": "dfa",
   "title": "Figure 1.8: Machine for recognizing strings that do not contain three consecutive b's",
-  "subtitle": "Language L = {w \u2208 {a, b}* : w does not contain 'bbb'}",
+  "subtitle": "Language L = {w ∈ {a, b}* : w does not contain 'bbb'}",
   "sample_input": "ababb",
   "alphabet": ["a", "b"],
   "width": 820,
@@ -19,5 +21,21 @@
     {"from": "q2", "to": "q0", "symbols": ["a"], "curve": 75},
     {"from": "q2", "to": "q3", "symbols": ["b"], "curve": 0, "label_offset": -16},
     {"from": "q3", "to": "q3", "symbols": ["a", "b"], "loop": "top"}
+  ],
+  "test_cases": [
+    {"input": "", "expected": true},
+    {"input": "a", "expected": true},
+    {"input": "b", "expected": true},
+    {"input": "ab", "expected": true},
+    {"input": "bb", "expected": true},
+    {"input": "bbb", "expected": false},
+    {"input": "abbb", "expected": false},
+    {"input": "bbba", "expected": false},
+    {"input": "abbabb", "expected": true},
+    {"input": "ababbb", "expected": false},
+    {"input": "bbabbb", "expected": false},
+    {"input": "bba", "expected": true},
+    {"input": "aaaa", "expected": true},
+    {"input": "ababb", "expected": true}
   ]
 }

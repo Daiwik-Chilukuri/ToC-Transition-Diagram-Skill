@@ -1,6 +1,8 @@
 {
+  "name": "sum_mod3",
+  "type": "dfa",
   "title": "Figure 1.9: Sum of Binary Digits Congruent to 2 mod 3",
-  "subtitle": "Accepts strings whose sum of bits is congruent to 2 mod 3 over \u03a3 = {0, 1}",
+  "subtitle": "Accepts strings whose sum of bits is congruent to 2 mod 3 over Σ = {0, 1}",
   "sample_input": "110",
   "alphabet": ["0", "1"],
   "width": 720,
@@ -17,5 +19,20 @@
     {"from": "1%3", "to": "2%3", "symbols": ["1"], "curve": -35},
     {"from": "2%3", "to": "2%3", "symbols": ["0"], "loop": "bottom"},
     {"from": "2%3", "to": "0%3", "symbols": ["1"], "curve": 0}
+  ],
+  "test_cases": [
+    {"input": "", "expected": false},
+    {"input": "0", "expected": false},
+    {"input": "1", "expected": false},
+    {"input": "11", "expected": true},
+    {"input": "110", "expected": true},
+    {"input": "0110", "expected": true},
+    {"input": "111", "expected": false},
+    {"input": "1111", "expected": false},
+    {"input": "11111", "expected": true},
+    {"input": "000", "expected": false},
+    {"input": "1010", "expected": true},
+    {"input": "1000100", "expected": true},
+    {"input": "10101", "expected": false}
   ]
 }
