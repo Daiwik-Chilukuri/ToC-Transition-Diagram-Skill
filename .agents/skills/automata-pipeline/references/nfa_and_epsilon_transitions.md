@@ -42,9 +42,11 @@ where:
 
 ### 2.2 Computation Tree Branching Paths (Figure 1.13)
 The evaluation of an NFA on an input string forms a directed computation tree rooted at $(s, w)$:
-1. **Accepting Path**: A leaf node $(q_f, \epsilon)$ where all input has been consumed and $q_f \in F$. If at least one leaf is accepting, the string is accepted.
+1. **Accepting Path**: A finite path reaching $(q_f, \epsilon)$ where all input has been consumed and $q_f \in F$. It need not be a leaf: outgoing $\epsilon$-edges do not prevent acceptance. One accepting path suffices.
 2. **Rejecting Path**: A leaf node $(q_r, \epsilon)$ where all input has been consumed but $q_r \notin F$, and no $\epsilon$-transitions can reach $F$.
-3. **Stuck / Non-Halting Path**: A node $(q, aw')$ where $a \in \Sigma$, $\delta(q, a) = \emptyset$, and no $\epsilon$-transitions can be taken. This branch terminates immediately without accepting.
+3. **Stuck Path**: A node $(q, aw')$ where $a \in \Sigma$, $\delta(q, a) = \emptyset$, and no $\epsilon$-transitions can be taken. This branch terminates without accepting.
+
+An $\epsilon$-cycle can produce an infinite computation branch; it does not block another finite accepting path. Simulate sets with a visited-state closure traversal instead of enumerating an infinite tree. Reject only when the final active set is disjoint from $F$.
 
 ---
 
@@ -128,5 +130,33 @@ Reverse the direction of every transition arrow. Introduce a new initial state $
 - $F = \{s_1\}$
 - Transition function $\delta$:
   - $\delta(s_0, \epsilon) = F_1$; $\delta(s_0, \sigma) = \emptyset$ for $\sigma \in \Sigma$
-  - For $q \in Q_1, \sigma \in \Sigma$: $\delta(q, \sigma) = \{p \in Q_1 : \delta_1(p, \sigma) \ni q\}$
-  - $\delta(q, \epsilon) = \emptyset$ for $q \in Q_1$
+  - For $q \in Q_1$ and **every** $u \in \Sigma \cup \{\epsilon\}$: $\delta(q,u) = \{p \in Q_1 : q \in \delta_1(p,u)\}$.
+
+This reverses existing $\epsilon$-edges as well as symbol edges. The lecture's p. 21 construction starts from a DFA, so its old-state $\epsilon$-sets are empty. They are not empty in general when the input is an $\epsilon$-NFA (Exercise 1.2.10). Example: reversing $s \xrightarrow{\epsilon} t \xrightarrow{a} f$ gives $s_0 \xrightarrow{\epsilon} f \xrightarrow{a} t \xrightarrow{\epsilon} s$, with only $s$ accepting.
+
+## 5. Construction discipline and empty-string cases
+
+Before combining components, rename each entire state set to disjoint IDs (e.g., `left_q0`, `right_q0`), updating all edges, starts, and finals. Preserve the old labels separately if useful. Use the common alphabet $\Sigma_1\cup\Sigma_2$; an NFA's undefined symbol moves become $\emptyset$, rather than requiring DFA trap states. Allocate fresh states outside both component sets.
+
+For a component DFA, read each scalar transition as a singleton NFA target and supply empty $\epsilon$-sets. Preserve all old edges when adding links: union with $\{s_2\}$ or $\{s_1\}$, never overwrite an existing $\epsilon$ target set.
+
+| Operation | Empty-string criterion | Why the construction is correct |
+|---|---|---|
+| $L_1\cup L_2$ | Either component accepts $\epsilon$ | Choose either component; every accepting path stays in its selected component after the new start |
+| $L_1L_2$ | Both components accept $\epsilon$ | Cross a final-to-start link after a prefix $x\in L_1$; accept after a suffix $y\in L_2$, so $w=xy$ |
+| $L_1^*$ | Always accepts $\epsilon$, including $L_1=\emptyset$ | New final start realizes zero factors; links between child runs realize finitely many factors in $L_1$ |
+| $L_1^R$ | Exactly when $L_1$ accepts $\epsilon$ | Reverse a finite accepting path, retaining the order-reversal of consumed symbols and all zero-symbol steps |
+
+In concatenation, old $F_1$ states cease to be final but retain outgoing edges. An accepting path can continue in the first machine or cross to the second, allowing every possible split. Empty factors are handled by closure, not by forcing a consumed boundary symbol.
+
+For Exercise 1.2.9, the fresh star start prevents accepting prefixes merely because they return to the old start. Counterexample: old start $s$, final $f$, edges $s\xrightarrow{a}s$ and $s\xrightarrow{b}f$ recognize $a^*b$. Making $s$ final accepts `a`, which is outside $(a^*b)^*$. Retain $s$ as nonfinal and add a fresh final start with an $\epsilon$-edge to $s$.
+
+## 6. One accepting state (Exercise 1.2.8)
+
+Add fresh $f_\text{new}$, make it the only final state, and add an $\epsilon$-edge from **every** old final to it. Keep all old transitions; give the new final no outgoing edges. An old accepting path can finish by taking that edge, and every path to the new final must first reach an old final. This also preserves $\epsilon$ acceptance and works when the old final set is empty (the new final is unreachable).
+
+## 7. Set traces and verification
+
+For $w=a_1\cdots a_n$, compute $A_0=E(\{s\})$ and $A_{i+1}=E(\bigcup_{q\in A_i}\delta(q,a_{i+1}))$. Accept iff $A_n\cap F\ne\emptyset$. An individual configuration trace may show symbol and $\epsilon$ moves separately; an $\epsilon$ move preserves the unread suffix. Use a set trace to certify rejection of all branches.
+
+Test empty components, components accepting $\epsilon$, multiple finals, pre-existing $\epsilon$ links, and cycles. The fixtures `concat_epsilon.json`, `star_incoming_start.json`, `reverse_epsilon.json`, and `regex_optional_a_b_star.json` in `scripts/examples/` exercise these cases. For regex structural recursion, read [regular expressions](regular_expressions.md); to determinize, read [subset construction](subset_construction.md).

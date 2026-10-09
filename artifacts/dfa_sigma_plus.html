@@ -59,7 +59,7 @@
       overflow-x: auto;
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
-    svg.dfa-diagram {
+    svg.automaton-diagram {
       max-width: 100%;
       height: auto;
       user-select: none;
@@ -209,7 +209,7 @@
     </div>
 
     <div class="canvas-card">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" width="720" height="340" class="dfa-diagram">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" width="720" height="340" class="automaton-diagram">
   <defs>
     <marker id="tikz-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
       <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#f0f6fc" />
@@ -260,15 +260,15 @@
   </g>
   <!-- States / Nodes -->
   <g class="nodes-layer">
-    <g class="node-group" id="node-q0">
-      <line x1="198" y1="190" x2="223" y2="190" class="start-arrow" />
+    <g class="node-group" id="node-q0" data-state-id="q0">
+      <line x1="198.0" y1="190" x2="223.0" y2="190" class="start-arrow" />
       <circle cx="250" cy="190" r="26" class="state-circle" />
-      <text x="250" y="190.5" class="state-label">q0</text>
+      <text x="250" y="190.5" class="state-label" style="font-size: 16.0px;">q0</text>
     </g>
-    <g class="node-group" id="node-q1">
+    <g class="node-group" id="node-q1" data-state-id="q1">
       <circle cx="490" cy="190" r="26" class="state-circle" />
       <circle cx="490" cy="190" r="21.5" class="state-circle-inner" />
-      <text x="490" y="190.5" class="state-label">q1</text>
+      <text x="490" y="190.5" class="state-label" style="font-size: 16.0px;">q1</text>
     </g>
   </g>
 </svg>
@@ -280,6 +280,7 @@
       </div>
       <div class="sim-controls">
         <input type="text" id="strInput" class="sim-input" placeholder="Enter input string (e.g. 101)" value="101">
+        <button id="btnBack" class="btn">Back</button>
         <button id="btnStep" class="btn btn-primary">Step</button>
         <button id="btnAuto" class="btn">Play</button>
         <button id="btnReset" class="btn">Reset</button>
@@ -293,9 +294,11 @@
   </div>
 
   <script>
-    const DFA_SPEC = {"start_state": "q0", "accept_states": ["q1"], "transition_map": {"q0,0": "q1", "q0,1": "q1", "q1,0": "q1", "q1,1": "q1"}, "alphabet": ["0", "1"]};
+    const AUTOMATON_SPEC = {"start_state": "q0", "accept_states": ["q1"], "transition_map": {"q0,0": ["q1"], "q0,1": ["q1"], "q1,0": ["q1"], "q1,1": ["q1"]}, "epsilon_map": {"q0": [], "q1": []}, "label_map": {"q0": "q0", "q1": "q1"}, "alphabet": ["0", "1"], "type": "dfa"};
 
-    let currentState = DFA_SPEC.start_state;
+    let currentState = AUTOMATON_SPEC.start_state;
+    let activeStates = new Set();
+    let history = [];
     let inputString = "";
     let headPos = 0;
     let isRunning = false;
@@ -303,6 +306,7 @@
     let traceSteps = [];
 
     const strInput = document.getElementById("strInput");
+    const btnBack = document.getElementById("btnBack");
     const btnStep = document.getElementById("btnStep");
     const btnAuto = document.getElementById("btnAuto");
     const btnReset = document.getElementById("btnReset");
@@ -310,13 +314,95 @@
     const stepTrace = document.getElementById("stepTrace");
     const statusBadge = document.getElementById("statusBadge");
 
-    function highlightState(stateId) {
+    function sanitizeId(id) {
+      const cleaned = String(id).replace(/[^a-zA-Z0-9_-]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
+      return cleaned || 'state';
+    }
+
+    function getLabel(id) {
+      return (AUTOMATON_SPEC.label_map && AUTOMATON_SPEC.label_map[id]) || id;
+    }
+
+    function formatStateSet(stateSet) {
+      if (!stateSet || stateSet.size === 0) return "∅";
+      const sorted = Array.from(stateSet).sort();
+      if (sorted.length === 1 && AUTOMATON_SPEC.type !== "nfa" && AUTOMATON_SPEC.type !== "epsilon_nfa") {
+        return getLabel(sorted[0]);
+      }
+      return "{" + sorted.map(id => getLabel(id)).join(", ") + "}";
+    }
+
+    function getTransitions(state, symbol) {
+      const flatKey = `${state},${symbol}`;
+      let targets = undefined;
+      if (AUTOMATON_SPEC.transition_map) {
+        targets = AUTOMATON_SPEC.transition_map[flatKey];
+        if (targets === undefined && AUTOMATON_SPEC.transition_map[state]) {
+          targets = AUTOMATON_SPEC.transition_map[state][symbol];
+        }
+      }
+      if (targets === undefined || targets === null) return [];
+      if (Array.isArray(targets)) return targets;
+      return [targets];
+    }
+
+    function getEpsilonTargets(state) {
+      if (AUTOMATON_SPEC.epsilon_map && AUTOMATON_SPEC.epsilon_map[state]) {
+        return AUTOMATON_SPEC.epsilon_map[state];
+      }
+      const t1 = getTransitions(state, "ε");
+      const t2 = getTransitions(state, "\epsilon");
+      const t3 = getTransitions(state, "epsilon");
+      return Array.from(new Set([...t1, ...t2, ...t3]));
+    }
+
+    function epsilonClosure(stateSet) {
+      const closure = new Set(stateSet);
+      const queue = Array.from(stateSet);
+      while (queue.length > 0) {
+        const curr = queue.pop();
+        const epsNext = getEpsilonTargets(curr);
+        for (const nxt of epsNext) {
+          if (!closure.has(nxt)) {
+            closure.add(nxt);
+            queue.push(nxt);
+          }
+        }
+      }
+      return closure;
+    }
+
+    function stepSetOnSymbol(currentActiveSet, symbol) {
+      const directTargets = new Set();
+      for (const q of currentActiveSet) {
+        const targets = getTransitions(q, symbol);
+        for (const tgt of targets) {
+          directTargets.add(tgt);
+        }
+      }
+      return epsilonClosure(directTargets);
+    }
+
+    function highlightActiveStates(stateSet) {
       document.querySelectorAll(".node-group").forEach(el => {
         el.classList.remove("active");
       });
-      const target = document.getElementById("node-" + stateId);
-      if (target) {
-        target.classList.add("active");
+      for (const sid of stateSet) {
+        const sanitized = sanitizeId(sid);
+        const target = document.getElementById("node-" + sanitized);
+        if (target) {
+          target.classList.add("active");
+        }
+      }
+    }
+
+    function highlightState(stateOrSet) {
+      if (stateOrSet instanceof Set) {
+        highlightActiveStates(stateOrSet);
+      } else if (Array.isArray(stateOrSet)) {
+        highlightActiveStates(new Set(stateOrSet));
+      } else {
+        highlightActiveStates(new Set(stateOrSet ? [stateOrSet] : []));
       }
     }
 
@@ -342,6 +428,11 @@
       }
     }
 
+    function updateStatus(stateClass, text) {
+      statusBadge.className = `status-badge badge-${stateClass}`;
+      statusBadge.textContent = text;
+    }
+
     function resetSimulation() {
       if (timer) {
         clearInterval(timer);
@@ -349,18 +440,40 @@
         isRunning = false;
         btnAuto.textContent = "Play";
       }
+
       inputString = strInput.value.trim();
       headPos = 0;
-      currentState = DFA_SPEC.start_state;
-      traceSteps = [`( ${currentState}, "${inputString || "\u03B5"}" )`];
-      highlightState(currentState);
+
+      activeStates = epsilonClosure([AUTOMATON_SPEC.start_state]);
+      currentState = activeStates.size > 0 ? Array.from(activeStates)[0] : null;
+
+      const setStr = formatStateSet(activeStates);
+      traceSteps = [`( ${setStr}, "${inputString || "\u03B5"}" )`];
+
+      highlightActiveStates(activeStates);
       renderTape();
-      updateStatus("ready", "Ready");
-      stepTrace.innerHTML = `Start state: <strong>${currentState}</strong>`;
-      
-      // If string is empty, evaluate immediate acceptance
+
+      if (AUTOMATON_SPEC.type === "nfa" || AUTOMATON_SPEC.type === "epsilon_nfa") {
+        updateStatus("ready", `Active: ${setStr}`);
+      } else {
+        updateStatus("ready", "Ready");
+      }
+      stepTrace.innerHTML = `Start state: <strong>${setStr}</strong>`;
+
+      history = [{
+        activeStates: Array.from(activeStates),
+        headPos: 0,
+        traceSteps: [...traceSteps],
+        statusClass: statusBadge.className,
+        statusText: statusBadge.textContent,
+        traceHtml: stepTrace.innerHTML
+      }];
+
       if (inputString.length === 0) {
         evaluateFinal();
+        history[0].statusClass = statusBadge.className;
+        history[0].statusText = statusBadge.textContent;
+        history[0].traceHtml = stepTrace.innerHTML;
       }
     }
 
@@ -371,42 +484,124 @@
       }
 
       const symbol = inputString[headPos];
-      const transKey = `${currentState},${symbol}`;
-      const nextState = DFA_SPEC.transition_map[transKey];
-
-      if (nextState === undefined) {
-        updateStatus("rejected", "No transition for symbol");
-        stepTrace.innerHTML += ` &rarr; <strong>Rejected (Undefined)</strong>`;
-        if (timer) { clearInterval(timer); timer = null; isRunning = false; btnAuto.textContent = "Play"; }
-        return false;
-      }
+      const nextActive = stepSetOnSymbol(activeStates, symbol);
 
       headPos++;
-      currentState = nextState;
-      highlightState(currentState);
+      activeStates = nextActive;
+      currentState = activeStates.size > 0 ? Array.from(activeStates)[0] : null;
+
+      highlightActiveStates(activeStates);
       renderTape();
 
       const remaining = inputString.slice(headPos) || "\u03B5";
-      traceSteps.push(`( ${currentState}, "${remaining}" )`);
+      const setStr = formatStateSet(activeStates);
+      traceSteps.push(`( ${setStr}, "${remaining}" )`);
       stepTrace.innerHTML = traceSteps.join(" &vdash; ");
+
+      if (activeStates.size === 0) {
+        updateStatus("rejected", "Active: ∅ (Dead)");
+        stepTrace.innerHTML += ` &rarr; <span style="color:#f85149; font-weight:bold;">&cross; Stuck / Dead (\u2205)</span>`;
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+          isRunning = false;
+          btnAuto.textContent = "Play";
+        }
+        history.push({
+          activeStates: [],
+          headPos: headPos,
+          traceSteps: [...traceSteps],
+          statusClass: statusBadge.className,
+          statusText: statusBadge.textContent,
+          traceHtml: stepTrace.innerHTML
+        });
+        if (headPos >= inputString.length) {
+          evaluateFinal();
+        }
+        return false;
+      }
+
+      let statusClass = "running";
+      let statusText = (AUTOMATON_SPEC.type === "nfa" || AUTOMATON_SPEC.type === "epsilon_nfa")
+        ? `Active: ${setStr}`
+        : `Reading "${inputString[headPos - 1]}"`;
+      updateStatus(statusClass, statusText);
+
+      history.push({
+        activeStates: Array.from(activeStates),
+        headPos: headPos,
+        traceSteps: [...traceSteps],
+        statusClass: statusBadge.className,
+        statusText: statusBadge.textContent,
+        traceHtml: stepTrace.innerHTML
+      });
 
       if (headPos >= inputString.length) {
         evaluateFinal();
+        const lastIdx = history.length - 1;
+        history[lastIdx].statusClass = statusBadge.className;
+        history[lastIdx].statusText = statusBadge.textContent;
+        history[lastIdx].traceHtml = stepTrace.innerHTML;
         return false;
       }
-      updateStatus("running", `Reading "${inputString[headPos]}"`);
+
+      return true;
+    }
+
+    function stepBackward() {
+      if (history.length <= 1) {
+        return false;
+      }
+
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+        isRunning = false;
+        btnAuto.textContent = "Play";
+      }
+
+      history.pop();
+      const prev = history[history.length - 1];
+
+      activeStates = new Set(prev.activeStates);
+      currentState = activeStates.size > 0 ? Array.from(activeStates)[0] : null;
+      headPos = prev.headPos;
+      traceSteps = [...prev.traceSteps];
+
+      highlightActiveStates(activeStates);
+      renderTape();
+      stepTrace.innerHTML = prev.traceHtml;
+      statusBadge.className = prev.statusClass;
+      statusBadge.textContent = prev.statusText;
+
       return true;
     }
 
     function evaluateFinal() {
-      const isAccept = DFA_SPEC.accept_states.includes(currentState);
+      const acceptList = AUTOMATON_SPEC.accept_states || [];
+      const acceptingInSet = Array.from(activeStates).filter(q => acceptList.includes(q));
+      const isAccept = acceptingInSet.length > 0;
+      const setStr = formatStateSet(activeStates);
+
       if (isAccept) {
-        updateStatus("accepted", "ACCEPTED");
-        stepTrace.innerHTML += ` &rarr; <span style="color:#3fb950; font-weight:bold;">&check; Accepted in ${currentState}</span>`;
+        const acceptLabels = acceptingInSet.map(q => getLabel(q)).join(", ");
+        if (AUTOMATON_SPEC.type === "nfa" || AUTOMATON_SPEC.type === "epsilon_nfa") {
+          updateStatus("accepted", `ACCEPTED (${setStr})`);
+          stepTrace.innerHTML += ` &rarr; <span style="color:#3fb950; font-weight:bold;">&check; Accepted via ${acceptLabels} in ${setStr}</span>`;
+        } else {
+          updateStatus("accepted", "ACCEPTED");
+          stepTrace.innerHTML += ` &rarr; <span style="color:#3fb950; font-weight:bold;">&check; Accepted in ${setStr}</span>`;
+        }
       } else {
-        updateStatus("rejected", "REJECTED");
-        stepTrace.innerHTML += ` &rarr; <span style="color:#f85149; font-weight:bold;">&cross; Rejected in ${currentState}</span>`;
+        if (AUTOMATON_SPEC.type === "nfa" || AUTOMATON_SPEC.type === "epsilon_nfa") {
+          updateStatus("rejected", `REJECTED (${setStr})`);
+          stepTrace.innerHTML += ` &rarr; <span style="color:#f85149; font-weight:bold;">&cross; Rejected in ${setStr}</span>`;
+        } else {
+          updateStatus("rejected", "REJECTED");
+          stepTrace.innerHTML += ` &rarr; <span style="color:#f85149; font-weight:bold;">&cross; Rejected in ${setStr}</span>`;
+        }
       }
+
       if (timer) {
         clearInterval(timer);
         timer = null;
@@ -415,9 +610,8 @@
       }
     }
 
-    function updateStatus(stateClass, text) {
-      statusBadge.className = `status-badge badge-${stateClass}`;
-      statusBadge.textContent = text;
+    if (btnBack) {
+      btnBack.addEventListener("click", stepBackward);
     }
 
     btnStep.addEventListener("click", () => {

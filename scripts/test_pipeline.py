@@ -4,9 +4,9 @@ test_pipeline.py
 Automated end-to-end verification harness for automata-pipeline.
 Validates:
   Stage 1: JSON Schema & Mathematical Integrity Validation across all specs
-  Stage 2: Batch HTML & SVG Compilation via render_dfa.py
+  Stage 2: Batch HTML & SVG Compilation via render_automaton.py
   Stage 3: Simulator Logic Verification across all test_cases (DFA and NFA/ε-NFA)
-  Stage 4: CLI Interface Verification of render_dfa.py
+  Stage 4: CLI Interface Verification of render_automaton.py
   Stage 5: Clean Tabular Reporting & Exit Code
 
 Zero third-party dependencies (Python 3 stdlib only).
@@ -52,14 +52,14 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 try:
-    from render_dfa import (
+    from render_automaton import (
         build_simulation_data,
-        compile_dfa,
+        compile_automaton,
         parse_and_normalize_symbols,
         auto_layout,
     )
 except ImportError as err:
-    print(f"Error importing render_dfa: {err}", file=sys.stderr)
+    print(f"Error importing render_automaton: {err}", file=sys.stderr)
     sys.exit(1)
 
 
@@ -227,7 +227,7 @@ def verify_compiled_output(html_path: Path, svg_path: Path) -> list[str]:
         "<!DOCTYPE html>",
         "<svg",
         "</svg>",
-        "const DFA_SPEC =",
+        "const AUTOMATON_SPEC =",
         "function stepSimulation",
         "function evaluateFinal",
         "class=\"tape-display\"",
@@ -278,7 +278,7 @@ def run_stage_2(spec_files: list[Path], python_exe: str, renderer_path: Path, ve
                     with open(p, "r", encoding="utf-8") as f:
                         spec_data = json.load(f)
                     spec_data = auto_layout(spec_data, "auto")
-                    compile_dfa(spec_data, str(out_html), str(out_svg))
+                    compile_automaton(spec_data, str(out_html), str(out_svg))
                     errs = verify_compiled_output(out_html, out_svg)
                 except Exception as e:
                     errs = [f"Compilation error: {e}"]
@@ -293,7 +293,7 @@ def run_stage_2(spec_files: list[Path], python_exe: str, renderer_path: Path, ve
                 ]
                 proc = subprocess.run(cmd, capture_output=True, text=True)
                 if proc.returncode != 0:
-                    errs = [f"render_dfa.py exited with code {proc.returncode}: {proc.stderr.strip()}"]
+                    errs = [f"render_automaton.py exited with code {proc.returncode}: {proc.stderr.strip()}"]
                 else:
                     errs = verify_compiled_output(out_html, out_svg)
 
@@ -437,7 +437,7 @@ def run_stage_3(spec_files: list[Path], verbose: bool) -> StageResult:
 def run_stage_4(python_exe: str, renderer_path: Path, sample_spec_path: Path, verbose: bool, fast: bool) -> StageResult:
     result = StageResult("Stage 4: CLI Interface Verification")
     t0 = time.time()
-    print(f"\n{bold('Stage 4:')} CLI Interface Verification of render_dfa.py")
+    print(f"\n{bold('Stage 4:')} CLI Interface Verification of render_automaton.py")
 
     with tempfile.TemporaryDirectory() as tmp_dir_str:
         tmp_dir = Path(tmp_dir_str)
@@ -552,7 +552,7 @@ def print_summary_table(results: list[StageResult], total_time: float) -> int:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Automata Pipeline automated verification harness (Milestone 4)"
+        description="Automata Pipeline automated verification harness"
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose per-spec and per-test logs")
     parser.add_argument("--specs-dir", default=str(REPO_ROOT / "specs"), help="Path to specs directory")
@@ -563,7 +563,7 @@ def main():
     args = parser.parse_args()
 
     python_exe = sys.executable
-    renderer_path = SCRIPTS_DIR / "render_dfa.py"
+    renderer_path = SCRIPTS_DIR / "render_automaton.py"
 
     if not renderer_path.exists():
         print(f"Error: Renderer script not found at {renderer_path}", file=sys.stderr)

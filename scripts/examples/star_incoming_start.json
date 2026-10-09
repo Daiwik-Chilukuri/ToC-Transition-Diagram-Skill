@@ -1,0 +1,325 @@
+{
+  "name": "star_incoming_start",
+  "type": "epsilon_nfa",
+  "title": "Star: (a*b)* with a fresh accepting start",
+  "subtitle": "Lecture-aligned construction; checks over {a,b} through length 5",
+  "alphabet": [
+    "a",
+    "b"
+  ],
+  "sample_input": "aabb",
+  "width": 900,
+  "height": 460,
+  "states": [
+    {
+      "id": "new_s",
+      "label": "new_s",
+      "x": 130,
+      "y": 180,
+      "is_start": true,
+      "is_accept": true
+    },
+    {
+      "id": "old_s",
+      "label": "old_s",
+      "x": 400,
+      "y": 180,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "old_f",
+      "label": "old_f",
+      "x": 680,
+      "y": 180,
+      "is_start": false,
+      "is_accept": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "new_s",
+      "to": "old_s",
+      "symbols": [
+        "ε"
+      ]
+    },
+    {
+      "from": "old_s",
+      "to": "old_s",
+      "symbols": [
+        "a"
+      ]
+    },
+    {
+      "from": "old_s",
+      "to": "old_f",
+      "symbols": [
+        "b"
+      ]
+    },
+    {
+      "from": "old_f",
+      "to": "old_s",
+      "symbols": [
+        "ε"
+      ],
+      "curve": 45,
+      "label_offset": 18
+    }
+  ],
+  "test_cases": [
+    {
+      "input": "",
+      "expected": true
+    },
+    {
+      "input": "a",
+      "expected": false
+    },
+    {
+      "input": "b",
+      "expected": true
+    },
+    {
+      "input": "aa",
+      "expected": false
+    },
+    {
+      "input": "ab",
+      "expected": true
+    },
+    {
+      "input": "ba",
+      "expected": false
+    },
+    {
+      "input": "bb",
+      "expected": true
+    },
+    {
+      "input": "aaa",
+      "expected": false
+    },
+    {
+      "input": "aab",
+      "expected": true
+    },
+    {
+      "input": "aba",
+      "expected": false
+    },
+    {
+      "input": "abb",
+      "expected": true
+    },
+    {
+      "input": "baa",
+      "expected": false
+    },
+    {
+      "input": "bab",
+      "expected": true
+    },
+    {
+      "input": "bba",
+      "expected": false
+    },
+    {
+      "input": "bbb",
+      "expected": true
+    },
+    {
+      "input": "aaaa",
+      "expected": false
+    },
+    {
+      "input": "aaab",
+      "expected": true
+    },
+    {
+      "input": "aaba",
+      "expected": false
+    },
+    {
+      "input": "aabb",
+      "expected": true
+    },
+    {
+      "input": "abaa",
+      "expected": false
+    },
+    {
+      "input": "abab",
+      "expected": true
+    },
+    {
+      "input": "abba",
+      "expected": false
+    },
+    {
+      "input": "abbb",
+      "expected": true
+    },
+    {
+      "input": "baaa",
+      "expected": false
+    },
+    {
+      "input": "baab",
+      "expected": true
+    },
+    {
+      "input": "baba",
+      "expected": false
+    },
+    {
+      "input": "babb",
+      "expected": true
+    },
+    {
+      "input": "bbaa",
+      "expected": false
+    },
+    {
+      "input": "bbab",
+      "expected": true
+    },
+    {
+      "input": "bbba",
+      "expected": false
+    },
+    {
+      "input": "bbbb",
+      "expected": true
+    },
+    {
+      "input": "aaaaa",
+      "expected": false
+    },
+    {
+      "input": "aaaab",
+      "expected": true
+    },
+    {
+      "input": "aaaba",
+      "expected": false
+    },
+    {
+      "input": "aaabb",
+      "expected": true
+    },
+    {
+      "input": "aabaa",
+      "expected": false
+    },
+    {
+      "input": "aabab",
+      "expected": true
+    },
+    {
+      "input": "aabba",
+      "expected": false
+    },
+    {
+      "input": "aabbb",
+      "expected": true
+    },
+    {
+      "input": "abaaa",
+      "expected": false
+    },
+    {
+      "input": "abaab",
+      "expected": true
+    },
+    {
+      "input": "ababa",
+      "expected": false
+    },
+    {
+      "input": "ababb",
+      "expected": true
+    },
+    {
+      "input": "abbaa",
+      "expected": false
+    },
+    {
+      "input": "abbab",
+      "expected": true
+    },
+    {
+      "input": "abbba",
+      "expected": false
+    },
+    {
+      "input": "abbbb",
+      "expected": true
+    },
+    {
+      "input": "baaaa",
+      "expected": false
+    },
+    {
+      "input": "baaab",
+      "expected": true
+    },
+    {
+      "input": "baaba",
+      "expected": false
+    },
+    {
+      "input": "baabb",
+      "expected": true
+    },
+    {
+      "input": "babaa",
+      "expected": false
+    },
+    {
+      "input": "babab",
+      "expected": true
+    },
+    {
+      "input": "babba",
+      "expected": false
+    },
+    {
+      "input": "babbb",
+      "expected": true
+    },
+    {
+      "input": "bbaaa",
+      "expected": false
+    },
+    {
+      "input": "bbaab",
+      "expected": true
+    },
+    {
+      "input": "bbaba",
+      "expected": false
+    },
+    {
+      "input": "bbabb",
+      "expected": true
+    },
+    {
+      "input": "bbbaa",
+      "expected": false
+    },
+    {
+      "input": "bbbab",
+      "expected": true
+    },
+    {
+      "input": "bbbba",
+      "expected": false
+    },
+    {
+      "input": "bbbbb",
+      "expected": true
+    }
+  ]
+}

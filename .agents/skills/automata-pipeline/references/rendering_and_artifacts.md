@@ -28,7 +28,7 @@ Visual outputs must strictly adhere to the academic dark-mode style:
 
 #### Standard CLI Command
 ```bash
-python scripts/render_dfa.py --spec <path_to_spec.json> --out <path_to_artifact.html>
+python scripts/render_automaton.py --spec <path_to_spec.json> --out <path_to_artifact.html>
 ```
 
 #### CLI Options
@@ -40,11 +40,15 @@ python scripts/render_dfa.py --spec <path_to_spec.json> --out <path_to_artifact.
 | `--layout` | No | `auto` | Layout algorithm: `auto`, `linear`, `circle`, `grid_2x2`, `grid_2x3` |
 
 #### Mandatory Rendering Rules for Closure Operations (Rule R2)
-When solving operations on two languages $L_1$ and $L_2$ (Union, Intersection, Set Difference, Symmetric Difference):
+When using a product DFA for a Boolean operation on two languages $L_1$ and $L_2$ (Union, Intersection, Set Difference, Symmetric Difference):
 1. **Component DFA 1 ($M_1$)**: Render `specs/<problem>_m1.json` $\to$ `artifacts/<problem>_m1.html`.
 2. **Component DFA 2 ($M_2$)**: Render `specs/<problem>_m2.json` $\to$ `artifacts/<problem>_m2.html`.
 3. **Product DFA ($M_1 \times M_2$)**: Render `specs/<problem>_product.json` $\to$ `artifacts/<problem>_product.html`.
 4. **Markdown Response**: All three artifacts must be rendered and explicitly linked in the user response.
+
+For $\epsilon$-union or concatenation, render the two input machines and the combined $\epsilon$-NFA; do not impose a product DFA. Use `type: "epsilon_nfa"` for the result and keep $\epsilon$ outside `alphabet`. Unary star/reversal transformations may show original and result. Regex-only explanations, pumping proofs, and unrevealed practice exercises do not require machine artifacts. The renderer takes JSON machines; regex conversion and determinization are mathematical workflows, not CLI conversion features.
+
+Portable documentation can use relative links. In Codex responses, resolve the output path and link the actual absolute local file. Always verify artifacts exist before linking them.
 
 
 ---
@@ -182,16 +186,16 @@ $$r_{\text{adaptive}} = \max\left(26, \left\lfloor\frac{\text{len}(\text{label})
 
 ## 5. Rules for Linking Artifacts in Markdown Responses
 
-#### Single-DFA Markdown Link Template
+#### Single-Automaton Markdown Link Template
 ```markdown
-### Interactive DFA Simulator
+### Interactive Automaton Simulator
 The complete formal automaton has been designed and rendered as a standalone interactive simulator:
-- **Interactive Simulator**: [Open Interactive DFA Simulator](artifacts/<spec_name>.html)
+- **Interactive Simulator**: [Open Interactive Automaton Simulator](artifacts/<spec_name>.html)
 - **JSON Specification**: `specs/<spec_name>.json`
 
 #### Simulator Instructions:
 1. Open `artifacts/<spec_name>.html` in any web browser or IDE preview tab.
-2. Enter an input string into the **Input String** field (or click one of the preloaded test cases).
+2. Enter an input string into the **Input String** field. Use a blank string to test ε; the JSON `test_cases` are checked by the test runner, not displayed as clickable cases.
 3. Click **Step** to trace the computation symbol by symbol, watching the active state glow and tape advance.
 4. Click **Play** for automated animation, or **Reset** to return to start state.
 5. The status banner dynamically displays **ACCEPTED** (green) or **REJECTED** (red) upon tape exhaustion.

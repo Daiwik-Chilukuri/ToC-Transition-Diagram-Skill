@@ -164,8 +164,10 @@ def construct_product_dfa(m1, m2, operation="union"):
 
 ## 5. Mandatory Rendering Instructions for Multi-DFA Tasks
 
-When asked to solve any problem involving Union, Intersection, Set Difference, or Symmetric Difference:
-1. Render $M_1$ as a standalone interactive artifact: `python scripts/render_dfa.py --spec specs/fig1_10_m1.json --out artifacts/fig1_10_m1.html`.
-2. Render $M_2$ as a standalone interactive artifact: `python scripts/render_dfa.py --spec specs/fig1_10_m2.json --out artifacts/fig1_10_m2.html`.
-3. Render the combined product machine $M_1 \times M_2$ using a 2x3 grid layout: `python scripts/render_dfa.py --spec specs/fig1_10_union.json --out artifacts/fig1_10_union.html --layout grid_2x3`.
+When using a product DFA for Union, Intersection, Set Difference, or Symmetric Difference:
+1. Render $M_1$ as a standalone interactive artifact: `python scripts/render_automaton.py --spec specs/fig1_10_m1.json --out artifacts/fig1_10_m1.html`.
+2. Render $M_2$ as a standalone interactive artifact: `python scripts/render_automaton.py --spec specs/fig1_10_m2.json --out artifacts/fig1_10_m2.html`.
+3. Render the combined product machine $M_1 \times M_2$ using a suitable grid (2x3 for Figure 1.10): `python scripts/render_automaton.py --spec specs/fig1_10_union.json --out artifacts/fig1_10_union.html --layout grid_2x3`.
 4. Provide direct markdown links to all 3 artifacts in the final response.
+
+For an explicitly requested $\epsilon$-NFA union, use [NFA constructions](nfa_and_epsilon_transitions.md) and render the two NFA components and their $\epsilon$-union instead. Concatenation, star, and reversal also use that reference. A product is appropriate for Boolean language operations, not direct concatenation or star. Complement applies to a complete DFA only; determinize an NFA first. Fix the ambient alphabet before complementing.

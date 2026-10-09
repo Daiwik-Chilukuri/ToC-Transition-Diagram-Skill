@@ -1,0 +1,354 @@
+{
+  "name": "concat_epsilon",
+  "type": "epsilon_nfa",
+  "title": "Concatenation: (ε+a)(ε+b)",
+  "subtitle": "Lecture-aligned construction; checks over {a,b} through length 5",
+  "alphabet": [
+    "a",
+    "b"
+  ],
+  "sample_input": "ab",
+  "width": 900,
+  "height": 460,
+  "states": [
+    {
+      "id": "left_s",
+      "label": "left_s",
+      "x": 130,
+      "y": 180,
+      "is_start": true,
+      "is_accept": false
+    },
+    {
+      "id": "left_a",
+      "label": "left_a",
+      "x": 310,
+      "y": 100,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "left_e",
+      "label": "left_e",
+      "x": 310,
+      "y": 290,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "right_s",
+      "label": "right_s",
+      "x": 530,
+      "y": 180,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "right_f",
+      "label": "right_f",
+      "x": 750,
+      "y": 180,
+      "is_start": false,
+      "is_accept": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "left_s",
+      "to": "left_a",
+      "symbols": [
+        "a"
+      ]
+    },
+    {
+      "from": "left_s",
+      "to": "left_e",
+      "symbols": [
+        "ε"
+      ]
+    },
+    {
+      "from": "left_a",
+      "to": "left_e",
+      "symbols": [
+        "ε"
+      ]
+    },
+    {
+      "from": "left_a",
+      "to": "right_s",
+      "symbols": [
+        "ε"
+      ]
+    },
+    {
+      "from": "left_e",
+      "to": "right_s",
+      "symbols": [
+        "ε"
+      ]
+    },
+    {
+      "from": "right_s",
+      "to": "right_f",
+      "symbols": [
+        "ε",
+        "b"
+      ]
+    }
+  ],
+  "test_cases": [
+    {
+      "input": "",
+      "expected": true
+    },
+    {
+      "input": "a",
+      "expected": true
+    },
+    {
+      "input": "b",
+      "expected": true
+    },
+    {
+      "input": "aa",
+      "expected": false
+    },
+    {
+      "input": "ab",
+      "expected": true
+    },
+    {
+      "input": "ba",
+      "expected": false
+    },
+    {
+      "input": "bb",
+      "expected": false
+    },
+    {
+      "input": "aaa",
+      "expected": false
+    },
+    {
+      "input": "aab",
+      "expected": false
+    },
+    {
+      "input": "aba",
+      "expected": false
+    },
+    {
+      "input": "abb",
+      "expected": false
+    },
+    {
+      "input": "baa",
+      "expected": false
+    },
+    {
+      "input": "bab",
+      "expected": false
+    },
+    {
+      "input": "bba",
+      "expected": false
+    },
+    {
+      "input": "bbb",
+      "expected": false
+    },
+    {
+      "input": "aaaa",
+      "expected": false
+    },
+    {
+      "input": "aaab",
+      "expected": false
+    },
+    {
+      "input": "aaba",
+      "expected": false
+    },
+    {
+      "input": "aabb",
+      "expected": false
+    },
+    {
+      "input": "abaa",
+      "expected": false
+    },
+    {
+      "input": "abab",
+      "expected": false
+    },
+    {
+      "input": "abba",
+      "expected": false
+    },
+    {
+      "input": "abbb",
+      "expected": false
+    },
+    {
+      "input": "baaa",
+      "expected": false
+    },
+    {
+      "input": "baab",
+      "expected": false
+    },
+    {
+      "input": "baba",
+      "expected": false
+    },
+    {
+      "input": "babb",
+      "expected": false
+    },
+    {
+      "input": "bbaa",
+      "expected": false
+    },
+    {
+      "input": "bbab",
+      "expected": false
+    },
+    {
+      "input": "bbba",
+      "expected": false
+    },
+    {
+      "input": "bbbb",
+      "expected": false
+    },
+    {
+      "input": "aaaaa",
+      "expected": false
+    },
+    {
+      "input": "aaaab",
+      "expected": false
+    },
+    {
+      "input": "aaaba",
+      "expected": false
+    },
+    {
+      "input": "aaabb",
+      "expected": false
+    },
+    {
+      "input": "aabaa",
+      "expected": false
+    },
+    {
+      "input": "aabab",
+      "expected": false
+    },
+    {
+      "input": "aabba",
+      "expected": false
+    },
+    {
+      "input": "aabbb",
+      "expected": false
+    },
+    {
+      "input": "abaaa",
+      "expected": false
+    },
+    {
+      "input": "abaab",
+      "expected": false
+    },
+    {
+      "input": "ababa",
+      "expected": false
+    },
+    {
+      "input": "ababb",
+      "expected": false
+    },
+    {
+      "input": "abbaa",
+      "expected": false
+    },
+    {
+      "input": "abbab",
+      "expected": false
+    },
+    {
+      "input": "abbba",
+      "expected": false
+    },
+    {
+      "input": "abbbb",
+      "expected": false
+    },
+    {
+      "input": "baaaa",
+      "expected": false
+    },
+    {
+      "input": "baaab",
+      "expected": false
+    },
+    {
+      "input": "baaba",
+      "expected": false
+    },
+    {
+      "input": "baabb",
+      "expected": false
+    },
+    {
+      "input": "babaa",
+      "expected": false
+    },
+    {
+      "input": "babab",
+      "expected": false
+    },
+    {
+      "input": "babba",
+      "expected": false
+    },
+    {
+      "input": "babbb",
+      "expected": false
+    },
+    {
+      "input": "bbaaa",
+      "expected": false
+    },
+    {
+      "input": "bbaab",
+      "expected": false
+    },
+    {
+      "input": "bbaba",
+      "expected": false
+    },
+    {
+      "input": "bbabb",
+      "expected": false
+    },
+    {
+      "input": "bbbaa",
+      "expected": false
+    },
+    {
+      "input": "bbbab",
+      "expected": false
+    },
+    {
+      "input": "bbbba",
+      "expected": false
+    },
+    {
+      "input": "bbbbb",
+      "expected": false
+    }
+  ]
+}

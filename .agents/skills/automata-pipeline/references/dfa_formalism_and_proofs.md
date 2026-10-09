@@ -31,9 +31,9 @@ State naming rules:
 - Structural / Positional constraints: `$OP$` (odd position), `$EP$` (even position), `$R$` (rejection sink)
 
 ### Part 2: Visual DFA Diagram & Interactive Tester
-Generate and link the standalone interactive HTML artifact using `scripts/render_dfa.py`:
+Generate and link the standalone interactive HTML artifact using `scripts/render_automaton.py`:
 - Specification path: `specs/<machine_name>.json`
-- Render command: `python scripts/render_dfa.py --spec specs/<machine_name>.json --out artifacts/<machine_name>.html`
+- Render command: `python scripts/render_automaton.py --spec specs/<machine_name>.json --out artifacts/<machine_name>.html`
 - Response link: `[Interactive DFA Simulator](artifacts/<machine_name>.html)`
 - Brief user guidance on step-by-step playback, active state glow, and test string verification.
 
@@ -168,8 +168,8 @@ $$\forall w \in \Sigma^*, \quad \forall q \in Q, \quad \hat{\delta}(s, w) = q \i
 - **Language**: $L = \{w \in \{0, 1\}^* : \forall i \in \{1, \dots, \lfloor |w|/2 \rfloor\}, w_{2i} = 0\}$
 - **States**: $Q = \{OP, EP, R\}$, $s = OP$, $F = \{OP, EP\}$.
 - **Invariants**:
-  - $P_{OP}(w) \equiv w \in L \text{ and } |w| \text{ is odd}$
-  - $P_{EP}(w) \equiv w \in L \text{ and } |w| \text{ is even}$
+  - $P_{OP}(w) \equiv w \in L \text{ and } |w| \text{ is even}$ (the next position to read is odd).
+  - $P_{EP}(w) \equiv w \in L \text{ and } |w| \text{ is odd}$ (the next position to read is even).
   - $P_R(w) \equiv w \notin L$ (rejection sink)
 - **Proof Walkthrough**:
   - Explicitly proves that the trap state $R$ absorbs all continuations: $\delta(R, \sigma) = R \implies \forall u \in \Sigma^*, \hat{\delta}(R, u) = R$.

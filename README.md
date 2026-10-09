@@ -2,12 +2,16 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![Dependencies: Zero](https://img.shields.io/badge/Dependencies-Zero%20(Stdlib%20Only)-brightgreen.svg?style=flat-square)](scripts/render_dfa.py)
+[![Dependencies: Zero](https://img.shields.io/badge/Dependencies-Zero%20(Stdlib%20Only)-brightgreen.svg?style=flat-square)](scripts/render_automaton.py)
 [![Theory: Formal Automata](https://img.shields.io/badge/Theory-Formal%20Automata%20%26%20Proofs-purple.svg?style=flat-square)](.agents/skills/automata-pipeline/references/dfa_formalism_and_proofs.md)
-[![Aesthetic: Dark-Mode TikZ](https://img.shields.io/badge/Aesthetic-Academic%20Dark--Mode%20TikZ-0d1117.svg?style=flat-square)](scripts/render_dfa.py)
+[![Aesthetic: Dark-Mode TikZ](https://img.shields.io/badge/Aesthetic-Academic%20Dark--Mode%20TikZ-0d1117.svg?style=flat-square)](scripts/render_automaton.py)
 [![Automated Tests: 100% Passed](https://img.shields.io/badge/Tests-100%25%20Passed-brightgreen.svg?style=flat-square)](scripts/test_pipeline.py)
 
-A modular, production-grade formal automata toolkit and autonomous AI agent skill designed for designing, proving, determinizing, and visually rendering **Deterministic Finite Automata (DFA)**, **Non-Deterministic Finite Automata (NFA)**, **$\epsilon$-NFAs**, **Cartesian Product Automata ($M_1 \times M_2$)**, and **Regular Languages** following the highest academic lecture standards.
+A modular formal automata toolkit and AI agent skill for **DFA**, **NFA**, **$\epsilon$-NFA**, **product automata**, **regular expressions**, and **pumping-lemma/nonregularity proofs**, with academic diagrams and interactive machine simulators.
+
+The skill incorporates Chapter 1 of the supplied `regular_Sept_30.pdf`, including ε-union, concatenation, star, reversal, regex conversions in both directions, the lecture's numbered-state recurrence, and pumping proofs. The [lecture context](.agents/skills/automata-pipeline/references/lecture_context.md) maps sections and exercises and records apparent formula corrections. The source PDF is not bundled; these references are self-contained summaries.
+
+For practice, request a topic or exercise number. The [practice workflow](.agents/skills/automata-pipeline/references/practice_workflow.md) supports one exercise at a time, incremental hints, and checking an attempt before revealing a full solution. Nonregularity proofs use proof guidance rather than a recognizing simulator.
 
 ---
 
@@ -24,7 +28,7 @@ A modular, production-grade formal automata toolkit and autonomous AI agent skil
   - [Master Entrypoint Router](#master-entrypoint-router)
   - [Modular Reference Library](#modular-reference-library)
 - [Quickstart CLI Reference](#quickstart-cli-reference)
-  - [Vector Diagram & HTML Simulator Compilation (`render_dfa.py`)](#vector-diagram--html-simulator-compilation-render_dfapy)
+  - [Vector Diagram & HTML Simulator Compilation (`render_automaton.py`)](#vector-diagram--html-simulator-compilation-render_automatonpy)
   - [Automated Verification Harness (`test_pipeline.py`)](#automated-verification-harness-test_pipelinepy)
 - [Specification Schema Reference](#specification-schema-reference)
   - [Interface Contract](#interface-contract)
@@ -47,7 +51,7 @@ The toolkit bridges rigorous mathematical automata theory with modern interactiv
                                      |
                                      v
        +-----------------------------------------------------------+
-       |            render_dfa.py Layout & Render Engine           |
+       |            render_automaton.py Layout & Render Engine           |
        |   - Adaptive Radius r = max(26, 10 + 3*len)               |
        |   - Responsive Font Sizing (Zero Label Clipping)          |
        |   - Generalized R x C Grid & Circular Topology            |
@@ -104,7 +108,7 @@ Every single DFA solution must satisfy the **5-part academic lecture standard**:
 
 #### Compilation Command:
 ```bash
-python scripts/render_dfa.py --spec specs/decimal_mod4.json --out artifacts/dfa_decimal_mod4.html --svg artifacts/dfa_decimal_mod4.svg
+python scripts/render_automaton.py --spec specs/decimal_mod4.json --out artifacts/dfa_decimal_mod4.html --svg artifacts/dfa_decimal_mod4.svg
 ```
 
 ---
@@ -127,11 +131,13 @@ $$\delta((p, q), \sigma) = (\delta_1(p, \sigma), \delta_2(q, \sigma))$$
 | **Set Difference** | $L(M_1) \setminus L(M_2)$ | $F_\setminus = F_1 \times (Q_2 \setminus F_2)$ | Corollary 1.1.10 |
 | **Symmetric Difference** | $L(M_1) \Delta L(M_2)$ | $F_\Delta = (F_1 \times \overline{F_2}) \cup (\overline{F_1} \times F_2)$ | Exercise 1.1.11 |
 
-#### Mandatory Multi-DFA Repository Mandate:
-For all regular closure operations, the pipeline mandates the independent generation and linking of **three interactive HTML artifacts**:
+#### Product-construction artifacts:
+For binary Boolean operations using a product DFA, generate and link **three interactive HTML artifacts**:
 1. **Component DFA $M_1$**: `artifacts/<problem>_m1.html`
 2. **Component DFA $M_2$**: `artifacts/<problem>_m2.html`
 3. **Combined Product DFA $M_1 \times M_2$**: `artifacts/<problem>_product.html`
+
+For ε-NFA union or concatenation, use two component NFAs and their combined ε-NFA instead. Star and reversal are unary transformations; complement requires one complete DFA. The skill preserves the construction method requested in the exercise.
 
 #### Canonical Figure 1.10 Walkthrough:
 - $M_1$: Accepts binary strings containing at least one `'1'` ($Q_1 = \{p_0, p_1\}$, $s_1 = p_0$, $F_1 = \{p_1\}$).
@@ -141,13 +147,13 @@ For all regular closure operations, the pipeline mandates the independent genera
 
 ```bash
 # Render component M1
-python scripts/render_dfa.py --spec specs/fig1_10_m1.json --out artifacts/fig1_10_m1.html
+python scripts/render_automaton.py --spec specs/fig1_10_m1.json --out artifacts/fig1_10_m1.html
 
 # Render component M2
-python scripts/render_dfa.py --spec specs/fig1_10_m2.json --out artifacts/fig1_10_m2.html
+python scripts/render_automaton.py --spec specs/fig1_10_m2.json --out artifacts/fig1_10_m2.html
 
 # Render combined Cartesian product DFA (2x3 grid)
-python scripts/render_dfa.py --spec specs/fig1_10_union.json --out artifacts/fig1_10_union.html --layout grid_2x3
+python scripts/render_automaton.py --spec specs/fig1_10_union.json --out artifacts/fig1_10_union.html --layout grid_2x3
 ```
 
 ---
@@ -189,10 +195,10 @@ When simulating NFAs, the embedded simulator tracks the live **active state set*
 
 ```bash
 # Render NFA with epsilon transitions and multi-target branching
-python scripts/render_dfa.py --spec specs/fig1_12_epsilon_nfa.json --out artifacts/fig1_12_epsilon_nfa.html --svg artifacts/fig1_12_epsilon_nfa.svg
+python scripts/render_automaton.py --spec specs/fig1_12_epsilon_nfa.json --out artifacts/fig1_12_epsilon_nfa.html --svg artifacts/fig1_12_epsilon_nfa.svg
 
 # Render equivalent determinized DFA
-python scripts/render_dfa.py --spec specs/fig1_12_dfa_converted.json --out artifacts/fig1_12_dfa_converted.html --svg artifacts/fig1_12_dfa_converted.svg
+python scripts/render_automaton.py --spec specs/fig1_12_dfa_converted.json --out artifacts/fig1_12_dfa_converted.html --svg artifacts/fig1_12_dfa_converted.svg
 ```
 
 ---
@@ -209,13 +215,17 @@ The repository acts as a specialized AI agent skill under `.agents/skills/automa
     ├── nfa_and_epsilon_transitions.md       # NFA quintuple, ε-closure, regular operations
     ├── subset_construction.md               # Theorem 1.2.1 determinization, reachability, Fig 1.11 & 1.12
     ├── dfa_formalism_and_proofs.md          # 5-part standard, invariants, inductive proofs
-    └── rendering_and_artifacts.md           # Visual aesthetic rules, JSON schema, layouts
+    ├── rendering_and_artifacts.md           # Visual aesthetic rules, JSON schema, layouts
+    ├── regular_expressions.md               # Semantics, identities, regex ↔ automata
+    ├── pumping_lemma_and_nonregularity.md    # Quantifiers, witnesses, closure reductions
+    ├── practice_workflow.md                 # Exercises, incremental hints, answer checking
+    └── lecture_context.md                  # PDF sections, exercise map, corrections
 ```
 
 ### Master Entrypoint Router (`SKILL.md`)
 - Maintains a compact footprint (< 120 lines).
 - Implements the Master Routing Table mapping tasks directly to reference guides.
-- Enforces the 5 core execution protocols (5-Part Standard, Multi-DFA Mandate, Totality Rigor, Professor's Aesthetic, Artifact CLI Generation).
+- Applies the five-part format to full machine solutions, preserves the requested closure method, and routes regex answers, nonregularity proofs, and guided practice to their appropriate formats.
 
 ### Modular Reference Library
 1. **`closure_and_product_construction.md`**: Complete Cartesian state space formulations, Boolean closure accepting sets ($F_\cup, F_\cap, F_{\text{comp}}, F_\setminus, F_\Delta$), Figure 1.10 walkthrough.
@@ -223,18 +233,33 @@ The repository acts as a specialized AI agent skill under `.agents/skills/automa
 3. **`subset_construction.md`**: Formal powerset determinization algorithm (Theorem 1.2.1), lazy state reachability, empty subset trap state routing, step-by-step conversions for Figures 1.11 and 1.12.
 4. **`dfa_formalism_and_proofs.md`**: Invariant definition templates, induction on string length $|w|$, configuration yield relations $(s, w) \vdash_M^* (q, \epsilon)$.
 5. **`rendering_and_artifacts.md`**: TikZ visual rules, RGB color variables, DOM ID sanitization, dynamic $R \times C$ product grid calculations, markdown linking conventions.
+6. **`regular_expressions.md`**: Academic regex syntax and precedence, identities, structural regex → ε-NFA → DFA, DFA → regex recurrence, and GNFA alternative.
+7. **`pumping_lemma_and_nonregularity.md`**: Quantifier order, arbitrary decompositions, worked witnesses, and closure reductions.
+8. **`practice_workflow.md`**: One-at-a-time exercises, progressive hints, and checking equivalent answers.
+9. **`lecture_context.md`**: Source page map, exercise anchors, notation, and corrections.
+
+### ε-construction examples
+
+The renderer accepts machine JSON; it does not parse raw regex or automatically perform conversions. New fixtures include `concat_epsilon.json`, `star_incoming_start.json`, `reverse_epsilon.json`, and `regex_optional_a_b_star.json`. Each contains all 63 words over `{a,b}` through length five as independent membership checks. The existing `fig1_14_regular_ops.json` supplies ε-union.
+
+```bash
+python scripts/render_automaton.py --spec scripts/examples/regex_optional_a_b_star.json --out artifacts/regex_optional_a_b_star.html --svg artifacts/regex_optional_a_b_star.svg
+python scripts/test_pipeline.py
+```
 
 ---
 
 ## Quickstart CLI Reference
 
-### Vector Diagram & HTML Simulator Compilation (`render_dfa.py`)
+### Vector Diagram & HTML Simulator Compilation (`render_automaton.py`)
 
 The renderer operates strictly via standard library Python (3.10+) with zero external package installations.
 
 ```bash
-python scripts/render_dfa.py --spec <spec.json> --out <artifact.html> [--svg <diagram.svg>] [--layout <strategy>]
+python scripts/render_automaton.py --spec <spec.json> --out <artifact.html> [--svg <diagram.svg>] [--layout <strategy>]
 ```
+
+The canonical Python API is `compile_automaton(spec, out_html_path, out_svg_path=None)` in `scripts/render_automaton.py`. Existing `python scripts/render_dfa.py ...` commands and `from render_dfa import compile_dfa` imports remain supported by a thin compatibility wrapper. New integrations should use the automaton names. DFA-specific machine types, filenames for determinized examples, and theory references retain their meaningful DFA names.
 
 #### Command-Line Arguments:
 | Flag | Type | Required | Description |
@@ -263,13 +288,16 @@ python scripts/test_pipeline.py
 # Verbose output with per-test trace reporting
 python scripts/test_pipeline.py --verbose
 
-# Fast mode (skips heavy vector path audits)
+# Fast mode (in-process compilation plus smoke CLI checks)
 python scripts/test_pipeline.py --fast
+
+# Canonical/legacy renderer CLI and Python API compatibility
+python scripts/test_renderer.py
 ```
 
 #### Pipeline Test Stages:
-1. **Stage 1: JSON Schema & Mathematical Integrity**: Validates quintuple completeness, start state uniqueness, transition endpoint containment, symbol alphabet conformance, and dead-state self-loop totality.
-2. **Stage 2: Batch HTML & SVG Compilation**: Compiles every specification through `scripts/render_dfa.py`, asserting exit code 0, non-empty artifacts (> 5 KB), and valid SVG DOM node geometry.
+1. **Stage 1: JSON Schema & Mathematical Integrity**: Checks state IDs, start state uniqueness, alphabet and transition fields, endpoint containment, transition symbols, and test-case field types. DFA determinism and totality remain construction requirements to check separately.
+2. **Stage 2: Batch HTML & SVG Compilation**: Compiles every specification through `scripts/render_automaton.py`, checking exit code 0, artifact size, and required HTML/SVG structure.
 3. **Stage 3: Simulator Logic Verification**: Simulates all defined `test_cases` against the internal transition engine (scalar for DFA, powerset $\epsilon$-closure for NFA), asserting 100% agreement with expected acceptance outcomes.
 4. **Stage 4: CLI Interface Verification**: Exercises CLI arguments, error exit codes on malformed inputs, and layout engine overrides.
 
@@ -378,28 +406,33 @@ Automata specifications are declared in standardized JSON format.
 │               ├── dfa_formalism_and_proofs.md
 │               ├── nfa_and_epsilon_transitions.md
 │               ├── rendering_and_artifacts.md
-│               └── subset_construction.md
+│               ├── subset_construction.md
+│               ├── regular_expressions.md
+│               ├── pumping_lemma_and_nonregularity.md
+│               ├── practice_workflow.md
+│               └── lecture_context.md
 ├── scripts/                               # Core Tooling & Verification
-│   ├── render_dfa.py                      # Pure Python SVG/HTML compiler
+│   ├── render_automaton.py                # Canonical DFA/NFA/ε-NFA SVG/HTML renderer
+│   ├── render_dfa.py                      # Legacy CLI and compile_dfa API wrapper
 │   ├── test_pipeline.py                   # Automated E2E verification test harness
+│   ├── test_renderer.py                   # Renderer command and API compatibility checks
 │   └── examples/                          # Canonical distribution examples
 │       ├── decimal_mod3.json
 │       ├── no_three_bs.json
-│       └── sum_mod3.json
-├── specs/                                 # Complete Automata Specification Suite (25 specs)
-│   ├── fig1_10_m1.json                    # Lecture Fig 1.10 Component M1
-│   ├── fig1_10_m2.json                    # Lecture Fig 1.10 Component M2
-│   ├── fig1_10_union.json                 # Lecture Fig 1.10 Union Product DFA
-│   ├── fig1_10_intersection.json          # Lecture Fig 1.10 Intersection Product DFA
-│   ├── fig1_10_difference.json            # Lecture Fig 1.10 Set Difference Product DFA
-│   ├── fig1_10_complement.json            # Lecture Fig 1.10 Complement DFA
-│   ├── fig1_11_nfa.json                   # Lecture Fig 1.11 NFA (L = {aba, ab}*)
-│   ├── fig1_11_dfa_converted.json         # Lecture Fig 1.11 Determinized DFA
-│   ├── fig1_12_epsilon_nfa.json           # Lecture Fig 1.12 ε-NFA
-│   ├── fig1_12_dfa_converted.json         # Lecture Fig 1.12 Determinized DFA
-│   ├── fig1_14_regular_ops.json           # Lecture Fig 1.14 Regular Operations NFA
-│   └── ...                                # 14 additional single DFA exercise specs
-├── artifacts/                             # Compiled Standalone HTML Simulators & SVGs
+│       ├── sum_mod3.json
+│       ├── fig1_10_product_union.json
+│       ├── fig1_11_nfa.json
+│       ├── fig1_11_dfa_converted.json
+│       ├── fig1_12_epsilon_nfa.json
+│       ├── fig1_12_dfa_converted.json
+│       ├── fig1_14_regular_ops.json
+│       ├── concat_epsilon.json
+│       ├── star_incoming_start.json
+│       ├── reverse_epsilon.json
+│       └── regex_optional_a_b_star.json
+├── specs/                                 # Practice specifications; new files ignored by Git
+│   └── sigma_plus.json                    # Bundled DFA for nonempty strings
+├── artifacts/                             # HTML/SVG outputs; new files ignored by Git
 ├── AGENTS.md                              # Mandatory agent behavioral & visual rules
 ├── GEMINI.md                              # Synchronized rules for Gemini models
 ├── LICENSE                                # MIT License (Copyright 2026 Daiwik Chilukuri)
@@ -410,15 +443,14 @@ Automata specifications are declared in standardized JSON format.
 
 ## Verification & Quality Assurance
 
-The codebase undergoes continuous verification against standard formal language benchmarks:
-- **Totality Audits**: All DFAs verify complete transitions across $|Q| \times |\Sigma|$.
-- **Equivalence Fuzzing**: Powerset-determinized DFAs are continuously verified against their source NFAs using 500+ random fuzzed strings per machine to guarantee Theorem 1.2.1 behavioral identity.
-- **Closure Invariants**: Product machines are evaluated across Boolean algebra invariants ($L(M_1 \cup M_2) = L(M_1) \cup L(M_2)$, $L(M_1 \setminus M_2) = L(M_1) \cap \overline{L(M_2)}$).
-- **DOM & Visual Rendering**: All SVGs pass bounding box and label containment audits without clipping.
+The verification harness checks specification fields and references, compiles every JSON fixture, verifies emitted HTML/SVG structure, and evaluates each fixture's expected string memberships using ε-closure simulation. The renderer compatibility suite also exercises both CLI names, both module entry points, and both Python compiler APIs.
+
+These checks do not automatically prove arbitrary language equivalence, perform pixel-level layout audits, or convert raw regex. The skill supplies mathematical construction and proof procedures; inspect generated diagrams when preparing a full solution.
 
 Run the test harness to verify your environment:
 ```bash
 python scripts/test_pipeline.py
+python scripts/test_renderer.py
 ```
 
 ---

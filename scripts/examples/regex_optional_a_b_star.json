@@ -1,0 +1,385 @@
+{
+  "name": "regex_optional_a_b_star",
+  "type": "epsilon_nfa",
+  "title": "Structural regex NFA: (a+ε)b*",
+  "subtitle": "Lecture-aligned construction; checks over {a,b} through length 5",
+  "alphabet": [
+    "a",
+    "b"
+  ],
+  "sample_input": "abb",
+  "width": 1150,
+  "height": 460,
+  "states": [
+    {
+      "id": "union_s",
+      "label": "union_s",
+      "x": 100,
+      "y": 230,
+      "is_start": true,
+      "is_accept": false
+    },
+    {
+      "id": "a_s",
+      "label": "a_s",
+      "x": 270,
+      "y": 100,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "a_f",
+      "label": "a_f",
+      "x": 450,
+      "y": 100,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "eps_f",
+      "label": "eps_f",
+      "x": 350,
+      "y": 370,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "star_s",
+      "label": "star_s",
+      "x": 620,
+      "y": 230,
+      "is_start": false,
+      "is_accept": true
+    },
+    {
+      "id": "b_s",
+      "label": "b_s",
+      "x": 810,
+      "y": 230,
+      "is_start": false,
+      "is_accept": false
+    },
+    {
+      "id": "b_f",
+      "label": "b_f",
+      "x": 1010,
+      "y": 230,
+      "is_start": false,
+      "is_accept": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "union_s",
+      "to": "a_s",
+      "symbols": [
+        "ε"
+      ]
+    },
+    {
+      "from": "union_s",
+      "to": "eps_f",
+      "symbols": [
+        "ε"
+      ]
+    },
+    {
+      "from": "a_s",
+      "to": "a_f",
+      "symbols": [
+        "a"
+      ]
+    },
+    {
+      "from": "a_f",
+      "to": "star_s",
+      "symbols": [
+        "ε"
+      ]
+    },
+    {
+      "from": "eps_f",
+      "to": "star_s",
+      "symbols": [
+        "ε"
+      ]
+    },
+    {
+      "from": "star_s",
+      "to": "b_s",
+      "symbols": [
+        "ε"
+      ]
+    },
+    {
+      "from": "b_s",
+      "to": "b_f",
+      "symbols": [
+        "b"
+      ]
+    },
+    {
+      "from": "b_f",
+      "to": "b_s",
+      "symbols": [
+        "ε"
+      ],
+      "curve": 40,
+      "label_offset": 16
+    }
+  ],
+  "test_cases": [
+    {
+      "input": "",
+      "expected": true
+    },
+    {
+      "input": "a",
+      "expected": true
+    },
+    {
+      "input": "b",
+      "expected": true
+    },
+    {
+      "input": "aa",
+      "expected": false
+    },
+    {
+      "input": "ab",
+      "expected": true
+    },
+    {
+      "input": "ba",
+      "expected": false
+    },
+    {
+      "input": "bb",
+      "expected": true
+    },
+    {
+      "input": "aaa",
+      "expected": false
+    },
+    {
+      "input": "aab",
+      "expected": false
+    },
+    {
+      "input": "aba",
+      "expected": false
+    },
+    {
+      "input": "abb",
+      "expected": true
+    },
+    {
+      "input": "baa",
+      "expected": false
+    },
+    {
+      "input": "bab",
+      "expected": false
+    },
+    {
+      "input": "bba",
+      "expected": false
+    },
+    {
+      "input": "bbb",
+      "expected": true
+    },
+    {
+      "input": "aaaa",
+      "expected": false
+    },
+    {
+      "input": "aaab",
+      "expected": false
+    },
+    {
+      "input": "aaba",
+      "expected": false
+    },
+    {
+      "input": "aabb",
+      "expected": false
+    },
+    {
+      "input": "abaa",
+      "expected": false
+    },
+    {
+      "input": "abab",
+      "expected": false
+    },
+    {
+      "input": "abba",
+      "expected": false
+    },
+    {
+      "input": "abbb",
+      "expected": true
+    },
+    {
+      "input": "baaa",
+      "expected": false
+    },
+    {
+      "input": "baab",
+      "expected": false
+    },
+    {
+      "input": "baba",
+      "expected": false
+    },
+    {
+      "input": "babb",
+      "expected": false
+    },
+    {
+      "input": "bbaa",
+      "expected": false
+    },
+    {
+      "input": "bbab",
+      "expected": false
+    },
+    {
+      "input": "bbba",
+      "expected": false
+    },
+    {
+      "input": "bbbb",
+      "expected": true
+    },
+    {
+      "input": "aaaaa",
+      "expected": false
+    },
+    {
+      "input": "aaaab",
+      "expected": false
+    },
+    {
+      "input": "aaaba",
+      "expected": false
+    },
+    {
+      "input": "aaabb",
+      "expected": false
+    },
+    {
+      "input": "aabaa",
+      "expected": false
+    },
+    {
+      "input": "aabab",
+      "expected": false
+    },
+    {
+      "input": "aabba",
+      "expected": false
+    },
+    {
+      "input": "aabbb",
+      "expected": false
+    },
+    {
+      "input": "abaaa",
+      "expected": false
+    },
+    {
+      "input": "abaab",
+      "expected": false
+    },
+    {
+      "input": "ababa",
+      "expected": false
+    },
+    {
+      "input": "ababb",
+      "expected": false
+    },
+    {
+      "input": "abbaa",
+      "expected": false
+    },
+    {
+      "input": "abbab",
+      "expected": false
+    },
+    {
+      "input": "abbba",
+      "expected": false
+    },
+    {
+      "input": "abbbb",
+      "expected": true
+    },
+    {
+      "input": "baaaa",
+      "expected": false
+    },
+    {
+      "input": "baaab",
+      "expected": false
+    },
+    {
+      "input": "baaba",
+      "expected": false
+    },
+    {
+      "input": "baabb",
+      "expected": false
+    },
+    {
+      "input": "babaa",
+      "expected": false
+    },
+    {
+      "input": "babab",
+      "expected": false
+    },
+    {
+      "input": "babba",
+      "expected": false
+    },
+    {
+      "input": "babbb",
+      "expected": false
+    },
+    {
+      "input": "bbaaa",
+      "expected": false
+    },
+    {
+      "input": "bbaab",
+      "expected": false
+    },
+    {
+      "input": "bbaba",
+      "expected": false
+    },
+    {
+      "input": "bbabb",
+      "expected": false
+    },
+    {
+      "input": "bbbaa",
+      "expected": false
+    },
+    {
+      "input": "bbbab",
+      "expected": false
+    },
+    {
+      "input": "bbbba",
+      "expected": false
+    },
+    {
+      "input": "bbbbb",
+      "expected": true
+    }
+  ]
+}
